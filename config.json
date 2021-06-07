@@ -1,0 +1,20 @@
+{
+    "policy": {
+        "include": [
+            "Document#cookie",
+            "Window#fetch",
+            "window#XMLHttpRequest",
+            "Window#localStorage",
+            "Window#sessionStorage",
+            "Window#XMLHttpRequest"
+        ]
+    },
+    "graphs": ["./graphs/*.graphml"],
+    "code": "output",
+    "trace": "data/trace.json",
+    "report": "data/report.html",
+    "bundle": {
+        "rules": "data/rules.txt",
+        "resources": "data/resources.json"
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "sugarcoat-pipeline",
+  "version": "0.1.0",
+  "description": "Implementation of SugarCoat pipeline",
+  "main": "run.js",
+  "scripts": {
+    "sugarcoat": "./run.js"
+  },
+  "dependencies": {
+    "pagegraph-crawl": "brave-experiments/pagegraph-crawl",
+    "sugarcoat": "brave-experiments/sugarcoat"
+  },
+  "author": "shivan@brave.com",
+  "license": "MIT",
+  "type": "module"
+}
