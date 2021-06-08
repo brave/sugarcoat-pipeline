@@ -4,13 +4,19 @@
   "description": "Implementation of SugarCoat pipeline",
   "main": "run.js",
   "scripts": {
-    "sugarcoat": "./run.js"
+    "sugarcoat-pipeline": "./run.js",
+    "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
+    "sugarcoat": "node node_modules/sugarcoat/cli.js"
   },
   "dependencies": {
     "pagegraph-crawl": "brave-experiments/pagegraph-crawl",
-    "sugarcoat": "brave-experiments/sugarcoat"
+    "sugarcoat": "brave-experiments/sugarcoat",
+    "uuid": "^8.3.2"
   },
   "author": "shivan@brave.com",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "prettierx": "^0.14.0"
+  }
 }

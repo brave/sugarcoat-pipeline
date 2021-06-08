@@ -3,18 +3,17 @@
         "include": [
             "Document#cookie",
             "Window#fetch",
-            "window#XMLHttpRequest",
             "Window#localStorage",
             "Window#sessionStorage",
             "Window#XMLHttpRequest"
         ]
     },
-    "graphs": ["./graphs/*.graphml"],
-    "code": "output",
-    "trace": "data/trace.json",
-    "report": "data/report.html",
+    "graphs": ["gen/graphs/*.graphml"],
+    "code": "gen/output",
+    "trace": "gen/trace.json",
+    "report": "gen/report.html",
     "bundle": {
-        "rules": "data/rules.txt",
-        "resources": "data/resources.json"
+        "rules": "gen/rules.txt",
+        "resources": "gen/resources.json"
     }
 }

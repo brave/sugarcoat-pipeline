@@ -56228,3 +56228,4 @@ youporn.com#?#aside:-abp-has(a.ad-remove)
 @@||twitter.com^$popup,domain=pornhub.com|pornhubthbh7ap3u.onion
 scevent
 google-analytics
+script1
