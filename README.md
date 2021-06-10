@@ -1,8 +1,8 @@
 # SugarCoat Pipeline
 
-CLI that implements the SugarCoat pipeline. It uses [sugarcoat](https://github.com/brave-experiments/sugarcoat).
+CLI that implements the SugarCoat pipeline. It uses [pagegraph-crawl](https://github.com/brave-experiments/pagegraph-crawl) for the graph generation, [pagegraph-rust-cli](https://github.com/brave-experiments/pagegraph-rust/tree/main/pagegraph-cli) as a Rust binary to get JS sources related to adblock rules from generated graphs, and [sugarcoat](https://github.com/brave-experiments/sugarcoat) for the actual sugarcoating of JS sources. 
 
-`pagegraph-cli` is a Rust binary that uses [pagegraph-rust](https://github.com/brave-experiments/pagegraph-rust).
+All output is generated in `gen/`. Because `sugarcoat` expects the config to be in a certain format, the user-provided `config.json` is modified on-the-fly and generated in `gen/`. 
 
 ## Usage
 ```bash
@@ -18,13 +18,14 @@ npm run sugarcoat-pipeline  -- -b ~/pagegraph-brave/src/out/Component/Brave\ Bro
 $ npm run sugarcoat-pipeline -- -h
 
 > sugarcoat-pipeline@0.1.0 sugarcoat-pipeline /Users/shivan/work/sugarcoat-experiments/sugarcoat-pipeline
-> ./run.js "-h"
+> ./sugarcoat-pipeline.js "-h"
 
-usage: run.js [-h] [-v] -b BINARY [-o OUTPUT] -u URL [-t SECS]
-              [--debug {none,debug}] [-l FILTER_LIST] [-c CONFIG]
+usage: sugarcoat-pipeline.js [-h] [-v] -b BINARY [-o OUTPUT] -u URL [-t SECS]
+                             [--debug {none,debug}] [-l FILTER_LIST]
+                             [-c CONFIG]
 
 
-CLI tool for crawling and recording websites with PageGraph
+CLI that implements the SugarCoat pipeline
 
 Optional arguments:
   -h, --help            Show this help message and exit.

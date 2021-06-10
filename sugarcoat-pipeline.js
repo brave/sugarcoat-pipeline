@@ -19,7 +19,7 @@ const defaultScriptOutput = genDir + '/output';
 const parser = new argparseLib.ArgumentParser({
   version: 0.1,
   addHelp: true,
-  description: 'CLI tool for crawling and recording websites with PageGraph',
+  description: 'CLI that implements the SugarCoat pipeline',
 });
 parser.addArgument(['-b', '--binary'], {
   required: true,
@@ -47,7 +47,7 @@ parser.addArgument(['-l', '--filter-list'], {
   help: 'Filter list to use',
 });
 parser.addArgument(['-c', '--config'], {
-  help: 'Path to sugarcoat config file',
+  help: 'Path to sugarcoat config file. Default: config.json',
   defaultValue: defaultConfigJson,
 });
 

@@ -1,10 +1,10 @@
 {
   "name": "sugarcoat-pipeline",
   "version": "0.1.0",
-  "description": "Implementation of SugarCoat pipeline",
+  "description": "CLI that implements the SugarCoat pipeline",
   "main": "run.js",
   "scripts": {
-    "sugarcoat-pipeline": "./run.js",
+    "sugarcoat-pipeline": "./sugarcoat-pipeline.js",
     "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
     "sugarcoat": "node node_modules/sugarcoat/cli.js"
   },
