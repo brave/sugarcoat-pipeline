@@ -68,11 +68,12 @@ let scriptNameToUrl = {};
 
 // Always clean up at start
 const cleanup = async () => {
+  debugLevel(debug) && console.log('Cleanup');
   await fs
     .mkdir(genDir)
     .catch(_ => fs.rmdir(genDir, { recursive: true }).then(_ => fs.mkdir(genDir)));
-  await fs.mkdir(outputDir);
-  await fs.mkdir(graphsDir);
+  fs.mkdir(outputDir);
+  fs.mkdir(graphsDir);
 };
 
 const generateGraphs = async () => {
@@ -87,6 +88,7 @@ const generateGraphs = async () => {
 };
 
 const getSources = async () => {
+  debugLevel(debug) && console.log('Getting sources');
   const files = await fs.readdir(graphsDir);
   if (files.length == 0) {
     process.exit(1);
@@ -117,7 +119,7 @@ const getSources = async () => {
       try {
         cmdOutput = execSync(pagegraphCmd);
       } catch {
-        return;
+        return; // if request ID is not related to script, the rust binary returns error code
       }
       jsonOutput = JSON.parse(cmdOutput);
       let url = jsonOutput.url;
@@ -130,6 +132,7 @@ const getSources = async () => {
 };
 
 const massageConfig = async () => {
+  debugLevel(debug) && console.log('Creating config.json');
   const output = await fs.readFile(configJsonFile, 'UTF-8');
   let config = JSON.parse(output);
   const policy = config.policy;
@@ -149,7 +152,7 @@ const massageConfig = async () => {
 };
 
 const runSugarCoat = async () => {
-  debugLevel(debug) && console.log('running sugarcoat');
+  debugLevel(debug) && console.log('Running sugarcoat');
   const cmd =
     'npm run sugarcoat  -- --config ' +
     massagedConfigJson +

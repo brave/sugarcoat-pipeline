@@ -40,5 +40,5 @@ Optional arguments:
   -l FILTER_LIST, --filter-list FILTER_LIST
                         Filter list to use
   -c CONFIG, --config CONFIG
-                        Path to sugarcoat config file
+                        Path to sugarcoat config file. Default: config.json
 ```
