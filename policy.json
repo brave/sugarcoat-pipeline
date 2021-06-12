@@ -1,0 +1,11 @@
+{
+    "policy": {
+        "include": [
+            "Document#cookie",
+            "Window#fetch",
+            "Window#localStorage",
+            "Window#sessionStorage",
+            "Window#XMLHttpRequest"
+        ]
+    }
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process';
-import { promises as fs } from 'fs';
+import { promises as fs, constants as constants } from 'fs';
 import argparseLib from 'argparse';
 import { writeGraphsForCrawl } from 'pagegraph-crawl/built/brave/crawl.js';
 import { validate } from 'pagegraph-crawl/built/brave/validate.js';
@@ -11,9 +11,11 @@ import { promisify } from 'util';
 
 const defaultCrawlSecs = 30;
 const defaultDebugSetting = 'none';
-const defaultConfigJson = 'config.json';
+const defaultPolicyJson = 'policy.json';
 const genDir = path.resolve('gen');
-const defaultScriptOutput = genDir + '/output';
+const graphsDir = genDir + '/graphs';
+const outputDir = genDir + '/output';
+const massagedConfigJson = genDir + '/config.json';
 
 // Parser options
 const parser = new argparseLib.ArgumentParser({
@@ -24,10 +26,6 @@ const parser = new argparseLib.ArgumentParser({
 parser.addArgument(['-b', '--binary'], {
   required: true,
   help: 'Path to the PageGraph enabled build of Brave.',
-});
-parser.addArgument(['-o', '--output'], {
-  help: 'Path (directory) to write scripts to.',
-  defaultValue: defaultScriptOutput,
 });
 parser.addArgument(['-u', '--url'], {
   help: 'The URL to record.',
@@ -46,32 +44,35 @@ parser.addArgument(['--debug'], {
 parser.addArgument(['-l', '--filter-list'], {
   help: 'Filter list to use',
 });
-parser.addArgument(['-c', '--config'], {
-  help: 'Path to sugarcoat config file. Default: config.json',
-  defaultValue: defaultConfigJson,
+parser.addArgument(['-p', '--policy'], {
+  help: 'Path to policy file. Default: policy.json',
+  defaultValue: defaultPolicyJson,
 });
 
 const debugLevel = debug => debug !== 'none';
 
 const crawlArgs = parser.parseArgs();
-const outputDir = crawlArgs.output;
-const configJsonFile = crawlArgs.config;
+const policyJsonFile = crawlArgs.policy;
 const filterlist = crawlArgs.filter_list;
 const debug = crawlArgs.debug;
 const url = crawlArgs.url;
-const graphsDir = genDir + '/graphs';
 const argsClone = JSON.parse(JSON.stringify(crawlArgs));
-const massagedConfigJson = genDir + '/config.json';
 
 argsClone.output = graphsDir;
 let scriptNameToUrl = {};
 
 // Always clean up at start
-const cleanup = async () => {
-  debugLevel(debug) && console.log('Cleanup');
+const cleanupAndCheckPolicyFile = async () => {
+  debugLevel(debug) && console.log('Cleaning up generated dirs');
+  // Remove generated directory if it exists and create new, or just create new
   await fs
     .mkdir(genDir)
     .catch(_ => fs.rmdir(genDir, { recursive: true }).then(_ => fs.mkdir(genDir)));
+  // Check if policy JSON file exists
+  await fs.access(policyJsonFile, constants.F_OK).catch(() => {
+    console.log('ERROR: ' + policyJsonFile + ' not found!');
+    process.exit(1);
+  });
   fs.mkdir(outputDir);
   fs.mkdir(graphsDir);
 };
@@ -133,9 +134,18 @@ const getSources = async () => {
 
 const massageConfig = async () => {
   debugLevel(debug) && console.log('Creating config.json');
-  const output = await fs.readFile(configJsonFile, 'UTF-8');
+  const output = await fs.readFile(policyJsonFile, 'UTF-8');
   let config = JSON.parse(output);
   const policy = config.policy;
+  config.graphs = [graphsDir + '/*.graphml'];
+  config.code = outputDir;
+  config.trace = genDir + '/trace.json';
+  config.report = genDir + '/report.html';
+  const bundle = {
+    rules: genDir + '/rules.txt',
+    resources: genDir + '/resources.json',
+  };
+  config.bundle = bundle;
   config.targets = {};
   delete config.policy;
   const files = await fs.readdir(outputDir);
@@ -163,7 +173,7 @@ const runSugarCoat = async () => {
 };
 
 (async () => {
-  await cleanup();
+  await cleanupAndCheckPolicyFile();
   await generateGraphs();
   await getSources();
   await massageConfig();
