@@ -2,7 +2,7 @@
 
 CLI that implements the SugarCoat pipeline. It uses [pagegraph-crawl](https://github.com/brave-experiments/pagegraph-crawl) for the graph generation, [pagegraph-rust-cli](https://github.com/brave-experiments/pagegraph-rust/tree/main/pagegraph-cli) as a Rust binary to get JS sources related to adblock rules from generated graphs, and [sugarcoat](https://github.com/brave-experiments/sugarcoat) for the actual sugarcoating of JS sources. 
 
-All output is generated in `gen/`. Because `sugarcoat` expects the config to be in a certain format, the user-provided `config.json` is modified on-the-fly and generated in `gen/`. 
+All output is generated in `gen/`. Because `sugarcoat` expects the config to be in a certain format, the user-provided `policy.json` (detailing rewrite policies) is modified on-the-fly and `config.json` is generated in `gen/config.json`. 
 
 ## Usage
 ```bash
@@ -20,9 +20,9 @@ $ npm run sugarcoat-pipeline -- -h
 > sugarcoat-pipeline@0.1.0 sugarcoat-pipeline /Users/shivan/work/sugarcoat-experiments/sugarcoat-pipeline
 > ./sugarcoat-pipeline.js "-h"
 
-usage: sugarcoat-pipeline.js [-h] [-v] -b BINARY [-o OUTPUT] -u URL [-t SECS]
+usage: sugarcoat-pipeline.js [-h] [-v] -b BINARY -u URL [-t SECS]
                              [--debug {none,debug}] [-l FILTER_LIST]
-                             [-c CONFIG]
+                             [-p POLICY]
 
 
 CLI that implements the SugarCoat pipeline
@@ -32,13 +32,11 @@ Optional arguments:
   -v, --version         Show program's version number and exit.
   -b BINARY, --binary BINARY
                         Path to the PageGraph enabled build of Brave.
-  -o OUTPUT, --output OUTPUT
-                        Path (directory) to write scripts to.
   -u URL, --url URL     The URL to record.
   -t SECS, --secs SECS  The dwell time in seconds. Defaults: 30 sec.
   --debug {none,debug}  Print debugging information. Default: none.
   -l FILTER_LIST, --filter-list FILTER_LIST
                         Filter list to use
-  -c CONFIG, --config CONFIG
-                        Path to sugarcoat config file. Default: config.json
+  -p POLICY, --policy POLICY
+                        Path to policy file. Default: policy.json
 ```
