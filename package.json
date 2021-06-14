@@ -5,13 +5,14 @@
   "main": "run.js",
   "scripts": {
     "sugarcoat-pipeline": "./sugarcoat-pipeline.js",
-    "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
-    "sugarcoat": "node node_modules/sugarcoat/cli.js"
+    "fmt": "prettierx --write \"*.js\" \"**/*.js\""
   },
   "dependencies": {
+    "argparse": "^2.0.1",
+    "globby": "^11.0.3",
     "pagegraph-crawl": "brave-experiments/pagegraph-crawl",
     "sugarcoat": "brave-experiments/sugarcoat",
-    "uuid": "^8.3.2"
+    "unused-filename": "^3.0.0"
   },
   "author": "shivan@brave.com",
   "license": "MIT",
