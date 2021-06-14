@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8"/>
+  <title>SugarCoat Report</title>
+  <style type="text/css">
+    * {
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      padding: 1em 1.618em;
+      background-color: #110c39;
+      color: #eafca1;
+      font-family:
+        Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter",
+        "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco,
+        "Courier New", Courier, monospace;
+    }
+    
+    h1 {
+      margin-top: 0;
+      margin-bottom: 0.67em;
+      
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    
+    .nameWrapper {
+      display: inline-block;
+      background-color: #147668;
+      border: 0.25em #0f594e dashed;
+      max-width: 100%;
+    }
+    
+    .name {
+      padding: 0.5em;
+      background-color: #199482;
+      font-weight: bold;
+      font-size: 2em;
+      text-shadow: 0.075em 0.075em 0px #110c39;
+    }
+    
+    .bindingList {
+      font-size: 1.5em;
+      margin: 0.67em 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .bindingList-empty {
+      font-style: italic;
+    }
+    
+    .bindingName {
+      font-weight: bold
+    }
+    
+    .bindingName:after {
+      content: ":";
+    }
+    
+    .accessCount {
+      font-size: 1.25em;
+      font-weight: bold;
+    }
+    
+    .accessTable {
+      border-spacing: 0.25em;
+    }
+    
+    .accessTable td {
+      padding: 0.1em;
+    }
+    
+    .accessPosition {
+      text-align: right;
+      background-color: #585574;
+      color: #e7b7bb;
+      text-shadow: 0.06em 0.06em 0px #110c39;
+      margin-right: 0.25em;
+    }
+    
+    .accessSnippet {
+      background-color: #0c0828;
+      color: #e7e7eb;
+    }
+    
+    .accessArrow {
+      color: #199482;
+      font-size: 1.15em;
+    }
+  </style>
+</head>
+<body>
+  <h1>SugarCoat Report</h1>
+    <div class="nameWrapper">
+      <div class="name">script1-8469cb3f-09bd-44e5-a621-7a70a85023f8</div>
+    </div>
+      <ul class="bindingList">
+          <li>
+            <span class="bindingName">Navigator#userAgent</span>
+            Accessed <span class="accessCount">1</span>
+            time.
+            <table class="accessTable">
+              <tbody>
+                  <tr>
+                    <td class="accessPosition">2:27</td>
+                    <td class="accessSnippet">
+                    &mldr;   console.log(navigator<span class="accessArrow">&rarr;</span>.userAgent);
+    console&mldr;
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <span class="bindingName">Window#localStorage</span>
+            Accessed <span class="accessCount">1</span>
+            time.
+            <table class="accessTable">
+              <tbody>
+                  <tr>
+                    <td class="accessPosition">3:24</td>
+                    <td class="accessSnippet">
+                    &mldr;;
+    console.log(window<span class="accessArrow">&rarr;</span>.localStorage);
+    cons&mldr;
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <span class="bindingName">Window#performance</span>
+            Accessed <span class="accessCount">1</span>
+            time.
+            <table class="accessTable">
+              <tbody>
+                  <tr>
+                    <td class="accessPosition">4:24</td>
+                    <td class="accessSnippet">
+                    &mldr;;
+    console.log(window<span class="accessArrow">&rarr;</span>.performance);
+}
+&mldr;
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </li>
+      </ul>
+</body>
+</html>
