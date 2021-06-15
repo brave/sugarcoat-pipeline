@@ -1,12 +1,13 @@
 {
   "name": "sugarcoat-pipeline",
   "version": "0.1.0",
-  "description": "CLI that implements the SugarCoat pipeline",
+  "description": "SugarCoat pipeline CLI",
   "main": "run.js",
   "scripts": {
     "sugarcoat-pipeline": "./sugarcoat-pipeline.js",
     "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
-    "postinstall": "chmod +x postinstall.sh && ./postinstall.sh"
+    "postinstall": "chmod +x postinstall.sh && ./postinstall.sh",
+    "test": "mocha test"
   },
   "dependencies": {
     "argparse": "^2.0.1",
@@ -16,9 +17,12 @@
     "unused-filename": "^3.0.0"
   },
   "author": "shivan@brave.com",
-  "license": "MIT",
+  "license": "MPL-2.0",
   "type": "module",
   "devDependencies": {
-    "prettierx": "^0.14.0"
+    "chai": "^4.3.4",
+    "http-server": "^0.12.3",
+    "mocha": "^9.0.0",
+    "prettierx": "^0.18.2"
   }
 }

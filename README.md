@@ -6,7 +6,7 @@ All output is generated in `gen/`. Sugarcoated scripts go in `gen/sugarcoated_sc
 
 ## Install
 
-NOTE! You need the [Rust and Cargo toolchain](https://doc.rust-lang.org/cargo/getting-started/installation.html) setup in order to use the SugarCoat pipeline. The `pagegraph-rust-cli` Rust binary is built as part of the installation process.
+NOTE! You need the [Rust and Cargo toolchain](https://doc.rust-lang.org/cargo/getting-started/installation.html) setup in order to use the SugarCoat pipeline. The `pagegraph-rust-cli` Rust binary is built as part of the installation process. 
 
 ```bash
 $ npm install
@@ -16,33 +16,41 @@ $ npm install
 ```bash
 $ npm run sugarcoat-pipeline  -- -b <PATH_TO_PAGEGRAPH_BINARY> -u <URL> -t <SECS_TO_RUN_PAGEGRAPH> -l <FILTERLIST>
 ```
+
+You can get the easylist filterlist [here](https://easylist.to/easylist/easylist.txt).
+
+```bash
+curl -s https://easylist.to/easylist/easylist.txt -o easylist.txt
+```
+
 ### Example:
 ```bash
-$ npm run sugarcoat-pipeline  -- -b ~/pagegraph-brave/src/out/Component/Brave\ Browser\ Development.app/Contents/MacOS/Brave\ Browser\ Development -u http://localhost:8000/test-script-calls-script.html  -t 10 -l easylist.txt
+$ npm run sugarcoat-pipeline  -- -b ~/pagegraph-brave/src/out/Component/Brave\ Browser\ Development.app/Contents/MacOS/Brave\ Browser\ Development -u http://localhost:8000/index.html  -t 10 -l easylist.txt
 ```
 
 ### Help
 ```bash
-$ npm run sugarcoat-pipeline -- --help
+$ npm run sugarcoat-pipeline -- -h
 
 > sugarcoat-pipeline@0.1.0 sugarcoat-pipeline /Users/shivan/work/sugarcoat-experiments/sugarcoat-pipeline
-> ./sugarcoat-pipeline.js "--help"
+> ./sugarcoat-pipeline.js "-h"
 
-usage: sugarcoat-pipeline.js [-h] -b BINARY -u URL [-t SECS] [--debug {none,debug}] [-l FILTER_LIST]
-                             [-p POLICY] [-k]
+usage: sugarcoat-pipeline.js [-h] [-b BINARY] [-u URL] [-t SECS] [-d] -l FILTER_LIST [-p POLICY] [-g GRAPHS_DIR_OVERRIDE] [-k]
 
-CLI that implements the SugarCoat pipeline
+SugarCoat pipeline CLI
 
 optional arguments:
   -h, --help            show this help message and exit
   -b BINARY, --binary BINARY
-                        Path to the PageGraph enabled build of Brave.
+                        Path to the PageGraph-enabled build of Brave
   -u URL, --url URL     The URL to record.
-  -t SECS, --secs SECS  The dwell time in seconds. Defaults: 30 sec.
-  --debug {none,debug}  Print debugging information. Default: none.
+  -t SECS, --secs SECS  The dwell time in seconds. Defaults: 30 seconds
+  -d, --debug           Print debugging information
   -l FILTER_LIST, --filter-list FILTER_LIST
                         Filter list to use
   -p POLICY, --policy POLICY
                         Path to policy file. Default: policy.json
-  -k, --keep            Keep intermediary files generated for sugarcoat in gen/
+  -g GRAPHS_DIR_OVERRIDE, --graphs-dir-override GRAPHS_DIR_OVERRIDE
+                        Path to graphs directory. If set, skips PageGraph generation
+  -k, --keep            Do not erase intermediary files generated in gen/ for sugarcoat
 ```

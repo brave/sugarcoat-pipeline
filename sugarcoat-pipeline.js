@@ -10,7 +10,6 @@ import unusedFilename from 'unused-filename';
 
 const execAsync = promisify(exec);
 const defaultCrawlSecs = 30;
-const defaultDebugSetting = 'none';
 const defaultPolicyJson = 'policy.json';
 const genDir = path.resolve('gen');
 const graphsDir = genDir + '/graphs';
@@ -22,54 +21,55 @@ const maxRetries = 3;
 // Parser options
 const parser = new argparseLib.ArgumentParser({
   add_help: true,
-  description: 'CLI that implements the SugarCoat pipeline',
+  description: 'SugarCoat pipeline CLI',
 });
 parser.add_argument('-b', '--binary', {
-  required: true,
-  help: 'Path to the PageGraph enabled build of Brave.',
+  help: 'Path to the PageGraph-enabled build of Brave',
 });
 parser.add_argument('-u', '--url', {
   help: 'The URL to record.',
-  required: true,
 });
 parser.add_argument('-t', '--secs', {
-  help: `The dwell time in seconds. Defaults: ${defaultCrawlSecs} sec.`,
+  help: `The dwell time in seconds. Defaults: ${defaultCrawlSecs} seconds`,
   type: 'int',
   default: defaultCrawlSecs,
 });
-parser.add_argument('--debug', {
-  help: `Print debugging information. Default: ${defaultDebugSetting}.`,
-  choices: ['none', 'debug'],
-  default: defaultDebugSetting,
+parser.add_argument('-d', '--debug', {
+  help: `Print debugging information`,
+  action: 'store_true',
+  default: false,
 });
 parser.add_argument('-l', '--filter-list', {
   help: 'Filter list to use',
+  required: true,
 });
 parser.add_argument('-p', '--policy', {
   help: 'Path to policy file. Default: policy.json',
   default: defaultPolicyJson,
 });
+parser.add_argument('-g', '--graphs-dir-override', {
+  help: 'Path to graphs directory. If set, skips PageGraph generation',
+});
 parser.add_argument('-k', '--keep', {
-  help: 'Keep intermediary files generated for sugarcoat in gen/',
+  help: 'Do not erase intermediary files generated in gen/ for sugarcoat',
   action: 'store_true',
   default: false,
 });
 
-const debug = debugLevel => debugLevel !== 'none';
-
 const args = parser.parse_args();
+const binary = args.binary;
+const url = args.url;
 const policyJsonFile = args.policy;
 const filterlist = args.filter_list;
-const debugLevel = args.debug;
-const binary = args.binary;
+const debug = args.debug;
 const secs = args.secs;
-const url = args.url;
 const keep = args.keep;
+const graphsDirOverride = args.graphs_dir_override ? path.resolve(args.graphs_dir_override) : null;
 let scriptNameToUrl = {};
 
 // Always clean up at start
 const preCleanup = async () => {
-  debug(debugLevel) && console.log('Cleaning up generated directories...');
+  debug && console.debug('Cleaning up generated directories...');
   // Remove generated directory if it exists and create new, or just create new
   await fs
     .mkdir(genDir)
@@ -80,13 +80,25 @@ const preCleanup = async () => {
     process.exit(1);
   });
   fs.mkdir(outputDir);
-  fs.mkdir(graphsDir);
+  if (!graphsDirOverride) fs.mkdir(graphsDir);
 };
 
 const generateGraphs = async retry => {
+  if (!binary || !url) {
+    console.error(
+      'ERROR: Must provide path to PageGraph-enabled browser binary (via --binary)' +
+        ' and url (via --url) in order to record graphs'
+    );
+    process.exit(1);
+  }
+  const retryFn = err => {
+    console.err(err);
+    const newRetry = retry - 1;
+    generateGraphs(newRetry);
+  };
   if (retry == 0) {
     console.error(
-      'ERROR: Tried generating graphs using pagegraph-crawl ' + maxRetries + ' but failed!'
+      'ERROR: Tried generating graphs using pagegraph-crawl ' + maxRetries + 'x but failed!'
     );
     process.exit(1);
   }
@@ -99,30 +111,31 @@ const generateGraphs = async retry => {
     url +
     ' --output ' +
     graphsDir;
-  debug(debugLevel) && console.log('Running pagegraph-crawl with command: ' + cmd);
+  debug && console.debug('Running pagegraph-crawl with command: ' + cmd);
   try {
-    await execAsync(cmd).catch(err => {
-      const newRetry = retry - 1;
-      generateGraphs(newRetry);
-    });
+    await execAsync(cmd).catch(err => retryFn(err));
   } catch (err) {
-    console.err(err); //TODO fix
+    retryFn(err);
   }
-  debug(debugLevel) && console.log('Pagegraph-crawl finished running!');
+  debug && console.debug('Pagegraph-crawl finished running!');
 };
 
-const getSources = async () => {
-  const files = await fs.readdir(graphsDir);
-  if (files.length == 0) {
+const getSources = async graphs => {
+  debug && console.debug('Reading graphs from ' + graphs);
+  const files = await fs.readdir(graphs);
+  const graphFiles = files.filter(file => path.extname(file).toLowerCase() === '.graphml');
+  if (graphFiles.length == 0) {
+    console.error('ERROR: No files found in ' + graphs + ' that end with .graphml');
     process.exit(1);
   }
-  debug(debugLevel) && console.log('Done generating graph files! Running pagegraph-cli...');
-  // For each graph file in graphsDir (can be run independently)
+  debug && console.debug('Running pagegraph-cli...');
+  // For each graph file in graphs (can be run independently)
   await Promise.all(
-    files.map(async graphFile => {
-      const pagegraphCmdBase = './pagegraph-cli' + ' -f ' + graphsDir + '/' + graphFile;
+    graphFiles.map(async graphFile => {
+      const pagegraphCmdBase = './pagegraph-cli' + ' -f ' + graphs + '/' + graphFile;
       // Get edges via adblock_rules
       let pagegraphCmd = pagegraphCmdBase + ' adblock_rules' + ' -l ' + filterlist;
+      debug && console.debug(pagegraphCmd);
       let cmdOutput = await execAsync(pagegraphCmd);
       let jsonOutput = JSON.parse(cmdOutput.stdout);
       const edges = jsonOutput.flatMap(edge =>
@@ -133,6 +146,7 @@ const getSources = async () => {
         await Promise.all(
           edges.flatMap(async edge => {
             pagegraphCmd = pagegraphCmdBase + ' downstream_requests ' + edge + ' --requests';
+            debug && console.debug(pagegraphCmd);
             cmdOutput = await execAsync(pagegraphCmd);
             jsonOutput = JSON.parse(cmdOutput.stdout);
             return jsonOutput;
@@ -144,6 +158,7 @@ const getSources = async () => {
       await Promise.all(
         uniqueRequests.map(async requestId => {
           pagegraphCmd = pagegraphCmdBase + ' request_id_info ' + requestId;
+          debug && console.debug(pagegraphCmd);
           try {
             cmdOutput = await execAsync(pagegraphCmd);
           } catch (err) {
@@ -165,12 +180,12 @@ const getSources = async () => {
   );
 };
 
-const massageConfig = async () => {
-  debug(debugLevel) && console.log('Creating config.json for sugarcoat...');
+const massageConfig = async graphs => {
+  debug && console.debug('Creating config.json for sugarcoat...');
   const output = await fs.readFile(policyJsonFile, 'UTF-8');
   let config = JSON.parse(output);
   const policy = config.policy;
-  config.graphs = [graphsDir + '/*.graphml'];
+  config.graphs = [graphs + '/*.graphml'];
   config.code = outputDir;
   config.trace = genDir + '/trace.json';
   config.report = genDir + '/report.html';
@@ -189,7 +204,7 @@ const massageConfig = async () => {
     newObj.policy = policy;
     config.targets[targetKey] = newObj;
   });
-  debug(debugLevel) && console.log('Writing massaged config.json...');
+  debug && console.debug('Writing massaged config.json...');
   await fs.writeFile(massagedConfigJson, JSON.stringify(config), { recursive: true });
 };
 
@@ -198,9 +213,9 @@ const runSugarCoat = async () => {
     'node node_modules/sugarcoat/cli.js --config ' +
     massagedConfigJson +
     ' --ingest --report --rewrite --bundle';
-  debug(debugLevel) && console.log('Running sugarcoat with command: ' + cmd);
+  debug && console.debug('Running sugarcoat with command: ' + cmd);
   await execAsync(cmd);
-  debug(debugLevel) && console.log('Sugarcoat command finished running!');
+  debug && console.debug('Sugarcoat command finished running!');
 };
 
 const postCleanup = async () => {
@@ -224,15 +239,23 @@ const postCleanup = async () => {
       })
     );
     fs.rmdir(outputDir);
-    fs.rmdir(graphsDir);
+    if (!graphsDirOverride) fs.rmdir(graphsDir);
   }
 };
 
 (async () => {
-  await preCleanup();
-  await generateGraphs(maxRetries);
-  await getSources();
-  await massageConfig();
-  await runSugarCoat();
-  await postCleanup();
-})();
+  try {
+    await preCleanup();
+    const graphsDirToUse = graphsDirOverride ? graphsDirOverride : graphsDir;
+    if (!graphsDirOverride) {
+      // Only generate graphs if graphs override not given
+      await generateGraphs(maxRetries);
+    }
+    await getSources(graphsDirToUse);
+    await massageConfig(graphsDirToUse);
+    await runSugarCoat();
+    await postCleanup();
+  } catch (err) {
+    console.error('ERROR while running sugarcoat-pipeline: ' + err);
+  }
+})().catch(err => console.error('ERROR: while running sugarcoat-pipeline: ' + err));
