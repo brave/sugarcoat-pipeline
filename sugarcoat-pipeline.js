@@ -50,7 +50,7 @@ parser.add_argument('-p', '--policy', {
   default: defaultPolicyJson,
 });
 parser.add_argument('-k', '--keep', {
-  help: 'Keep intermediary files',
+  help: 'Keep intermediary files generated for sugarcoat in gen/',
   action: 'store_true',
   default: false,
 });

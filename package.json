@@ -5,7 +5,8 @@
   "main": "run.js",
   "scripts": {
     "sugarcoat-pipeline": "./sugarcoat-pipeline.js",
-    "fmt": "prettierx --write \"*.js\" \"**/*.js\""
+    "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
+    "postinstall": "chmod +x postinstall.sh && ./postinstall.sh"
   },
   "dependencies": {
     "argparse": "^2.0.1",
