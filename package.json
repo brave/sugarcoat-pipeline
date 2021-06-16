@@ -6,13 +6,14 @@
   "scripts": {
     "sugarcoat-pipeline": "./sugarcoat-pipeline.js",
     "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
-    "postinstall": "chmod +x postinstall.sh && ./postinstall.sh",
+    "postinstall": "node postinstall.js",
     "test": "mocha test"
   },
   "dependencies": {
     "argparse": "^2.0.1",
     "globby": "^11.0.3",
     "pagegraph-crawl": "brave-experiments/pagegraph-crawl",
+    "shelljs": "^0.8.4",
     "sugarcoat": "brave-experiments/sugarcoat",
     "unused-filename": "^3.0.0"
   },
