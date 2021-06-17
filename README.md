@@ -6,7 +6,7 @@ All output is generated in `gen/`. Sugarcoated scripts go in `gen/sugarcoated_sc
 
 ## Install
 
-NOTE! You need the [Rust and Cargo toolchain](https://doc.rust-lang.org/cargo/getting-started/installation.html) setup in order to use the SugarCoat pipeline. The `pagegraph-rust-cli` Rust binary is built as part of the installation process. 
+NOTE! You need the [Rust and Cargo toolchain](https://doc.rust-lang.org/cargo/getting-started/installation.html) setup in order to use the SugarCoat pipeline. The `pagegraph-rust-cli` Rust binary is built as part of the post-installation phase. 
 
 ```bash
 $ npm install
@@ -32,7 +32,6 @@ $ npm run sugarcoat-pipeline  -- -b ~/pagegraph-brave/src/out/Component/Brave\ B
 ```bash
 $ npm run sugarcoat-pipeline -- -h
 
-> sugarcoat-pipeline@0.1.0 sugarcoat-pipeline /Users/shivan/work/sugarcoat-experiments/sugarcoat-pipeline
 > ./sugarcoat-pipeline.js "-h"
 
 usage: sugarcoat-pipeline.js [-h] [-b BINARY] [-u URL] [-t SECS] [-d] -l FILTER_LIST [-p POLICY] [-g GRAPHS_DIR_OVERRIDE] [-k]
