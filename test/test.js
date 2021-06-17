@@ -3,10 +3,10 @@ import * as fs from 'fs';
 import { expect } from 'chai';
 import * as path from 'path';
 
-const testDirBase = path.resolve('test/cases');
+const testDirBase = path.resolve(path.join('test', 'cases'));
 const genDir = 'gen';
-const rules = `${genDir}/rules.txt`;
-const scripts = `${genDir}/sugarcoated_scripts`;
+const rules = path.join(genDir, '/sugarcoat_rules.txt');
+const scripts = path.join(genDir, '/sugarcoated_scripts');
 
 afterEach('Clean up gen/', () => {
   fs.rmdirSync(genDir, { recursive: true, force: true });
@@ -14,13 +14,14 @@ afterEach('Clean up gen/', () => {
 
 describe('SugarCoat Pipeline CLI', () => {
   it('sugarcoats for simple case', () => {
-    const testDir = testDirBase + '/simple';
-    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${testDir}/list.txt`, {
+    const testDir = path.join(testDirBase, '/simple');
+    const listPath = path.join(testDir, 'list.txt');
+    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath}`, {
       stdio: 'inherit',
     });
     // Check gen/
     expect(fs.existsSync(rules)).to.be.true;
-    expect(fs.existsSync(scripts + '/sugarcoat-script1.js')).to.be.true;
+    expect(fs.existsSync(path.join(scripts, '/sugarcoat-script1.js'))).to.be.true;
     const rulesString =
       'https://localhost:8000/script1.js$script,important,redirect=sugarcoat-script1';
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
@@ -28,26 +29,25 @@ describe('SugarCoat Pipeline CLI', () => {
 
   it('handles exceptions in filter list', () => {
     const testDir = testDirBase + '/exceptions';
+    let listPath = path.join(testDir, 'list_without_exception.txt');
     // check without exception
-    execSync(
-      `npm run sugarcoat-pipeline -- -g ${testDir} -l ${testDir}/list_without_exception.txt`,
-      {
-        stdio: 'inherit',
-      }
-    );
-    // Check gen/
-    expect(fs.existsSync(rules)).to.be.true;
-    expect(fs.existsSync(scripts + '/sugarcoat-script1.js')).to.be.true;
-    const rulesString =
-      'https://localhost:8000/script1.js$script,important,redirect=sugarcoat-script1';
-    expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
-    // check with exception
-    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${testDir}/list.txt`, {
+    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath}`, {
       stdio: 'inherit',
     });
     // Check gen/
     expect(fs.existsSync(rules)).to.be.true;
-    expect(fs.existsSync(scripts + '/sugarcoat-script1.js')).to.not.be.true;
+    expect(fs.existsSync(path.join(scripts, '/sugarcoat-script1.js'))).to.be.true;
+    const rulesString =
+      'https://localhost:8000/script1.js$script,important,redirect=sugarcoat-script1';
+    expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
+    // check with exception
+    listPath = path.join(testDir, 'list.txt');
+    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath}`, {
+      stdio: 'inherit',
+    });
+    // Check gen/
+    expect(fs.existsSync(rules)).to.be.true;
+    expect(fs.existsSync(path.join(scripts, '/sugarcoat-script1.js'))).to.not.be.true;
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal('');
   });
 });

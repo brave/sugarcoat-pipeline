@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { exec, execFile } from 'child_process';
-import { promises as fs, constants as constants } from 'fs';
+import { promises as fs, constants } from 'fs';
 import argparseLib from 'argparse';
 import * as path from 'path';
 import { promisify } from 'util';
@@ -13,10 +13,10 @@ const execFileAsync = promisify(execFile);
 const defaultCrawlSecs = 30;
 const defaultPolicyJson = 'policy.json';
 const genDir = path.resolve('gen');
-const graphsDir = genDir + '/graphs';
-const outputDir = genDir + '/output';
-const sugarcoatedScriptsDir = genDir + '/sugarcoated_scripts';
-const massagedConfigJson = genDir + '/config.json';
+const graphsDir = path.join(genDir, '/graphs');
+const outputDir = path.join(genDir, '/output');
+const sugarcoatedScriptsDir = path.join(genDir, '/sugarcoated_scripts');
+const massagedConfigJson = path.join(genDir, '/config.json');
 const maxRetries = 3;
 
 // Parser options
@@ -136,7 +136,7 @@ const getSources = async graphs => {
       const pagegraphBinary = path.resolve(
         process.platform === 'win32' ? 'pagegraph-cli.exe' : 'pagegraph-cli'
       );
-      const pagegraphBinaryArgs = ['-f', `${graphs}/${graphFile}`];
+      const pagegraphBinaryArgs = ['-f', path.join(graphs, graphFile)];
       const options = { windowsHide: true };
       const adblockArgs = [...pagegraphBinaryArgs, 'adblock_rules', '-l', filterlist];
       let cmdOutput = await execFileAsync(pagegraphBinary, adblockArgs, options);
@@ -172,13 +172,13 @@ const getSources = async graphs => {
           }
           jsonOutput = JSON.parse(cmdOutput.stdout);
           let url = jsonOutput.url;
-          let scriptName = path.posix.basename(url, '.js');
+          let scriptName = path.basename(url, '.js');
           let source = jsonOutput.source;
-          const scriptFilePath = outputDir + '/' + scriptName + '.js';
+          const scriptFilePath = path.join(outputDir, scriptName + '.js');
           let unusedScriptFilename = await unusedFilename(scriptFilePath, {
             incrementer: unusedFilename.separatorIncrementer('-'),
           });
-          scriptNameToUrl[path.posix.basename(unusedScriptFilename, '.js')] = url;
+          scriptNameToUrl[path.basename(unusedScriptFilename, '.js')] = url;
           fs.writeFile(unusedScriptFilename, source, { recursive: true });
         })
       );
@@ -191,32 +191,35 @@ const massageConfig = async graphs => {
   const output = await fs.readFile(policyJsonFile, 'UTF-8');
   let config = JSON.parse(output);
   const policy = config.policy;
-  config.graphs = [graphs + '/*.graphml'];
+  config.graphs = [path.join(graphs, '/*.graphml')];
   config.code = outputDir;
-  config.trace = genDir + '/trace.json';
-  config.report = genDir + '/report.html';
+  config.trace = path.join(genDir, '/sugarcoat_trace.json');
+  config.report = path.join(genDir, '/sugarcoat_report.html');
   const bundle = {
-    rules: genDir + '/rules.txt',
-    resources: genDir + '/resources.json',
+    rules: path.join(genDir, '/sugarcoat_rules.txt'),
+    resources: path.join(genDir, '/sugarcoat_resources.json'),
   };
   config.bundle = bundle;
   config.targets = {};
   delete config.policy;
   const files = await fs.readdir(outputDir);
   files.forEach(file => {
-    const targetKey = file.split('.js')[0];
+    const targetKey = path.basename(file, '.js');
     let newObj = {};
     newObj.patterns = [scriptNameToUrl[targetKey]];
     newObj.policy = policy;
     config.targets[targetKey] = newObj;
   });
-  debug && console.debug('Writing massaged config.json...');
+  debug && console.debug('Writing massaged config.json... ');
+  debug && console.dir(config, { depth: null });
   await fs.writeFile(massagedConfigJson, JSON.stringify(config), { recursive: true });
 };
 
 const runSugarCoat = async () => {
   const cmd =
-    'node node_modules/sugarcoat/cli.js --config ' +
+    'node ' +
+    path.join('node_modules', 'sugarcoat', 'cli.js') +
+    ' --config ' +
     massagedConfigJson +
     ' --ingest --report --rewrite --bundle';
   debug && console.debug('Running sugarcoat with command: ' + cmd);
@@ -226,26 +229,26 @@ const runSugarCoat = async () => {
 
 const postCleanup = async () => {
   // Move generated scripts out of output/ and into sugarcoatedScriptsDir
-  const sugarcoatedScripts = await globby(outputDir + '/sugarcoat-*.js');
+  const sugarcoatedScripts = await globby(path.join(outputDir, '/sugarcoat-*.js'));
   await fs.mkdir(sugarcoatedScriptsDir);
   await Promise.all(
     sugarcoatedScripts.map(async sugarcoatedScript => {
-      const scriptName = path.posix.basename(sugarcoatedScript);
-      fs.rename(sugarcoatedScript, sugarcoatedScriptsDir + '/' + scriptName);
+      const scriptName = path.basename(sugarcoatedScript);
+      fs.rename(sugarcoatedScript, path.join(sugarcoatedScriptsDir, scriptName));
     })
   );
   // Keep only essential files: rules.txt and sugarcoatedScriptsDir unless --keep
   if (!keep) {
-    const filesToDelete = await globby(genDir + '/**/*', {
-      ignore: [genDir + '/rules.txt', sugarcoatedScriptsDir],
+    fs.rmdir(outputDir, { recursive: true, force: true });
+    const filesToDelete = await globby(path.join(genDir, '/**/*'), {
+      ignore: [path.join(genDir, '/sugarcoat_rules.txt'), sugarcoatedScriptsDir],
     });
     await Promise.all(
       filesToDelete.map(async file => {
-        fs.unlink(file, { force: true });
+        fs.unlink(file, { recursive: true, force: true });
       })
     );
-    fs.rmdir(outputDir, { force: true });
-    if (!graphsDirOverride) fs.rmdir(graphsDir);
+    if (!graphsDirOverride) fs.rmdir(graphsDir, { recursive: true, force: true });
   }
 };
 
