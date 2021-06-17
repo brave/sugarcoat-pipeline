@@ -25,6 +25,7 @@ describe('SugarCoat Pipeline CLI', () => {
       'https://localhost:8000/script1.js$script,important,redirect=sugarcoat-script1';
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
   });
+
   it('handles exceptions in filter list', () => {
     const testDir = testDirBase + '/exceptions';
     // check without exception
