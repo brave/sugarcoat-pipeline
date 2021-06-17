@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { promises as fs, constants as constants } from 'fs';
 import argparseLib from 'argparse';
 import * as path from 'path';
@@ -9,6 +9,7 @@ import globby from 'globby';
 import unusedFilename from 'unused-filename';
 
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 const defaultCrawlSecs = 30;
 const defaultPolicyJson = 'policy.json';
 const genDir = path.resolve('gen');
@@ -132,11 +133,13 @@ const getSources = async graphs => {
   // For each graph file in graphs (can be run independently)
   await Promise.all(
     graphFiles.map(async graphFile => {
-      const pagegraphCmdBase = './pagegraph-cli' + ' -f ' + graphs + '/' + graphFile;
-      // Get edges via adblock_rules
-      let pagegraphCmd = pagegraphCmdBase + ' adblock_rules' + ' -l ' + filterlist;
-      debug && console.debug(pagegraphCmd);
-      let cmdOutput = await execAsync(pagegraphCmd);
+      const pagegraphBinary = path.resolve(
+        process.platform === 'win32' ? 'pagegraph-cli.exe' : 'pagegraph-cli'
+      );
+      const pagegraphBinaryArgs = ['-f', `${graphs}/${graphFile}`];
+      const options = { windowsHide: true };
+      const adblockArgs = [...pagegraphBinaryArgs, 'adblock_rules', '-l', filterlist];
+      let cmdOutput = await execFileAsync(pagegraphBinary, adblockArgs, options);
       let jsonOutput = JSON.parse(cmdOutput.stdout);
       const edges = jsonOutput.flatMap(edge =>
         edge.requests.map(requestAndEdgeTuple => requestAndEdgeTuple[1])
@@ -145,9 +148,13 @@ const getSources = async graphs => {
       const requests = (
         await Promise.all(
           edges.flatMap(async edge => {
-            pagegraphCmd = pagegraphCmdBase + ' downstream_requests ' + edge + ' --requests';
-            debug && console.debug(pagegraphCmd);
-            cmdOutput = await execAsync(pagegraphCmd);
+            const downstreamRequestsArgs = [
+              ...pagegraphBinaryArgs,
+              'downstream_requests',
+              edge,
+              '--requests',
+            ];
+            cmdOutput = await execFileAsync(pagegraphBinary, downstreamRequestsArgs, options);
             jsonOutput = JSON.parse(cmdOutput.stdout);
             return jsonOutput;
           })
@@ -157,10 +164,9 @@ const getSources = async graphs => {
       // For each request id, get the source and put into outputDir
       await Promise.all(
         uniqueRequests.map(async requestId => {
-          pagegraphCmd = pagegraphCmdBase + ' request_id_info ' + requestId;
-          debug && console.debug(pagegraphCmd);
+          const requestIdInfoArgs = [...pagegraphBinaryArgs, 'request_id_info', requestId];
           try {
-            cmdOutput = await execAsync(pagegraphCmd);
+            cmdOutput = await execFileAsync(pagegraphBinary, requestIdInfoArgs, options);
           } catch (err) {
             return; // if request ID is not related to script, the rust binary returns error code
           }
@@ -238,7 +244,7 @@ const postCleanup = async () => {
         fs.unlink(file, { force: true });
       })
     );
-    fs.rmdir(outputDir);
+    fs.rmdir(outputDir, { force: true });
     if (!graphsDirOverride) fs.rmdir(graphsDir);
   }
 };

@@ -4,7 +4,7 @@
   "description": "SugarCoat pipeline CLI",
   "main": "run.js",
   "scripts": {
-    "sugarcoat-pipeline": "./sugarcoat-pipeline.js",
+    "sugarcoat-pipeline": "node sugarcoat-pipeline.js",
     "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
     "postinstall": "node postinstall.js",
     "test": "mocha --timeout 10000"
