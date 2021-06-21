@@ -59,14 +59,14 @@ parser.add_argument('-k', '--keep', {
 
 const args = parser.parse_args();
 const binary = args.binary;
-const url = args.url;
+const crawlUrl = args.url;
 const policyJsonFile = args.policy;
 const filterlist = args.filter_list;
 const debug = args.debug;
 const secs = args.secs;
 const keep = args.keep;
 const graphsDirOverride = args.graphs_dir_override ? path.resolve(args.graphs_dir_override) : null;
-let scriptNameToUrl = {};
+let scriptNameToUrl = {}; // Used to get 'patterns' URL for each script
 
 // Always clean up at start
 const preCleanup = async () => {
@@ -85,7 +85,7 @@ const preCleanup = async () => {
 };
 
 const generateGraphs = async retry => {
-  if (!binary || !url) {
+  if (!binary || !crawlUrl) {
     console.error(
       'ERROR: Must provide path to PageGraph-enabled browser binary (via --binary)' +
         ' and url (via --url) in order to record graphs'
@@ -93,7 +93,7 @@ const generateGraphs = async retry => {
     process.exit(1);
   }
   const retryFn = err => {
-    console.err(err);
+    console.error(err);
     const newRetry = retry - 1;
     generateGraphs(newRetry);
   };
@@ -109,7 +109,7 @@ const generateGraphs = async retry => {
     '" --secs ' +
     secs +
     ' --url ' +
-    url +
+    crawlUrl +
     ' --output ' +
     graphsDir;
   debug && console.debug('Running pagegraph-crawl with command: ' + cmd);
@@ -139,7 +139,15 @@ const getSources = async graphs => {
       const pagegraphBinaryArgs = ['-f', path.join(graphs, graphFile)];
       const options = { windowsHide: true };
       const adblockArgs = [...pagegraphBinaryArgs, 'adblock_rules', '-l', filterlist];
-      let cmdOutput = await execFileAsync(pagegraphBinary, adblockArgs, options);
+
+      let cmdOutput;
+
+      try {
+        cmdOutput = await execFileAsync(pagegraphBinary, adblockArgs, options);
+      } catch (err) {
+        return; // if there is a weirdly-shaped domain, don't error out
+      }
+
       let jsonOutput = JSON.parse(cmdOutput.stdout);
       const edges = jsonOutput.flatMap(edge =>
         edge.requests.map(requestAndEdgeTuple => requestAndEdgeTuple[1])
@@ -171,14 +179,15 @@ const getSources = async graphs => {
             return; // if request ID is not related to script, the rust binary returns error code
           }
           jsonOutput = JSON.parse(cmdOutput.stdout);
-          let url = jsonOutput.url;
-          let scriptName = path.basename(url, '.js');
+          const origUrl = jsonOutput.url;
+          const parsedUrl = new URL(origUrl);
+          let scriptName = path.basename(parsedUrl.pathname, '.js');
           let source = jsonOutput.source;
           const scriptFilePath = path.join(outputDir, scriptName + '.js');
           let unusedScriptFilename = await unusedFilename(scriptFilePath, {
             incrementer: unusedFilename.separatorIncrementer('-'),
           });
-          scriptNameToUrl[path.basename(unusedScriptFilename, '.js')] = url;
+          scriptNameToUrl[path.basename(unusedScriptFilename, '.js')] = origUrl;
           fs.writeFile(unusedScriptFilename, source, { recursive: true });
         })
       );
@@ -239,13 +248,13 @@ const postCleanup = async () => {
   );
   // Keep only essential files: rules.txt and sugarcoatedScriptsDir unless --keep
   if (!keep) {
-    fs.rmdir(outputDir, { recursive: true, force: true });
+    await fs.rmdir(outputDir, { recursive: true, force: true });
     const filesToDelete = await globby(path.join(genDir, '/**/*'), {
       ignore: [path.join(genDir, '/sugarcoat_rules.txt'), sugarcoatedScriptsDir],
     });
     await Promise.all(
       filesToDelete.map(async file => {
-        fs.unlink(file, { recursive: true, force: true });
+        fs.unlink(file);
       })
     );
     if (!graphsDirOverride) fs.rmdir(graphsDir, { recursive: true, force: true });
