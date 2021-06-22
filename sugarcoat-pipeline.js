@@ -84,7 +84,26 @@ const preCleanup = async () => {
   if (!graphsDirOverride) fs.mkdir(graphsDir);
 };
 
-const generateGraphs = async retry => {
+const readGraphFiles = async graphsDir => {
+  const files = await fs.readdir(graphsDir);
+  return files.filter(file => path.extname(file).toLowerCase() === '.graphml');
+};
+
+const generateGraphs = async (retriesLeft, graphsDir, readLocal) => {
+  if (readLocal) {
+    const graphFiles = await readGraphFiles(graphsDir);
+    if (graphFiles.length == 0) {
+      console.error('ERROR: No files found in ' + graphsDir + ' that end with .graphml');
+      process.exit(1);
+    }
+    return graphFiles;
+  }
+  if (retriesLeft == 0) {
+    console.error(
+      'ERROR: Tried generating graphs using pagegraph-crawl ' + maxRetries + 'x but failed!'
+    );
+    process.exit(1);
+  }
   if (!binary || !crawlUrl) {
     console.error(
       'ERROR: Must provide path to PageGraph-enabled browser binary (via --binary)' +
@@ -92,19 +111,8 @@ const generateGraphs = async retry => {
     );
     process.exit(1);
   }
-  const retryFn = err => {
-    console.error(err);
-    const newRetry = retry - 1;
-    generateGraphs(newRetry);
-  };
-  if (retry == 0) {
-    console.error(
-      'ERROR: Tried generating graphs using pagegraph-crawl ' + maxRetries + 'x but failed!'
-    );
-    process.exit(1);
-  }
   const cmd =
-    'node node_modules/pagegraph-crawl/built/run.js --binary "' +
+    'node node_modules/pagegraph-crawl/built/run.js  --binary "' +
     binary +
     '" --secs ' +
     secs +
@@ -113,22 +121,20 @@ const generateGraphs = async retry => {
     ' --output ' +
     graphsDir;
   debug && console.debug('Running pagegraph-crawl with command: ' + cmd);
-  try {
-    await execAsync(cmd).catch(err => retryFn(err));
-  } catch (err) {
-    retryFn(err);
+  await execAsync(cmd);
+  const graphFiles = await readGraphFiles(graphsDir);
+  debug && console.log(graphFiles);
+  if (graphFiles.length == 0) {
+    const newRetriesLeft = retriesLeft - 1;
+    debug && console.debug('No files found in ' + graphsDir + ' that end with .graphml');
+    debug && console.debug('Retries left: ' + newRetriesLeft);
+    return generateGraphs(newRetriesLeft, graphsDir, readLocal);
   }
   debug && console.debug('Pagegraph-crawl finished running!');
+  return graphFiles;
 };
 
-const getSources = async graphs => {
-  debug && console.debug('Reading graphs from ' + graphs);
-  const files = await fs.readdir(graphs);
-  const graphFiles = files.filter(file => path.extname(file).toLowerCase() === '.graphml');
-  if (graphFiles.length == 0) {
-    console.error('ERROR: No files found in ' + graphs + ' that end with .graphml');
-    process.exit(1);
-  }
+const getSources = async (graphFiles, graphsDir) => {
   debug && console.debug('Running pagegraph-cli...');
   // For each graph file in graphs (can be run independently)
   await Promise.all(
@@ -136,12 +142,11 @@ const getSources = async graphs => {
       const pagegraphBinary = path.resolve(
         process.platform === 'win32' ? 'pagegraph-cli.exe' : 'pagegraph-cli'
       );
-      const pagegraphBinaryArgs = ['-f', path.join(graphs, graphFile)];
+      const pagegraphBinaryArgs = ['-f', path.join(graphsDir, graphFile)];
       const options = { windowsHide: true };
       const adblockArgs = [...pagegraphBinaryArgs, 'adblock_rules', '-l', filterlist];
 
       let cmdOutput;
-
       try {
         cmdOutput = await execFileAsync(pagegraphBinary, adblockArgs, options);
       } catch (err) {
@@ -265,11 +270,9 @@ const postCleanup = async () => {
   try {
     await preCleanup();
     const graphsDirToUse = graphsDirOverride ? graphsDirOverride : graphsDir;
-    if (!graphsDirOverride) {
-      // Only generate graphs if graphs override not given
-      await generateGraphs(maxRetries);
-    }
-    await getSources(graphsDirToUse);
+    const readLocal = !!graphsDirOverride;
+    const graphFiles = await generateGraphs(maxRetries, graphsDirToUse, readLocal);
+    await getSources(graphFiles, graphsDirToUse);
     await massageConfig(graphsDirToUse);
     await runSugarCoat();
     await postCleanup();

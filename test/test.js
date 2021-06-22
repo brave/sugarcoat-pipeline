@@ -50,4 +50,29 @@ describe('SugarCoat Pipeline CLI', () => {
     expect(fs.existsSync(path.join(scripts, '/sugarcoat-script1.js'))).to.not.be.true;
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal('');
   });
+
+  it('soundcloud.com', () => {
+    const testDir = testDirBase + '/soundcloud.com';
+    let listPath = path.join(testDir, 'easylist.txt');
+    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath}`, {
+      stdio: 'inherit',
+    });
+    // Check gen/
+    expect(fs.existsSync(rules)).to.be.true;
+    expect(fs.readFileSync(rules, 'UTF-8')).to.equal('');
+  });
+
+  it('microsoft.com', () => {
+    const testDir = testDirBase + '/microsoft.com';
+    let listPath = path.join(testDir, 'easylist.txt');
+    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath}`, {
+      stdio: 'inherit',
+    });
+    // Check gen/
+    expect(fs.existsSync(rules)).to.be.true;
+    expect(fs.existsSync(path.join(scripts, '/sugarcoat-meversion.js'))).to.be.true;
+    expect(fs.readFileSync(rules, 'UTF-8')).to.equal(
+      'https://mem.gfx.ms/meversion?partner=MSHomePage&market=en-us&uhf=1$script,important,redirect=sugarcoat-meversion'
+    );
+  });
 });
