@@ -12,6 +12,9 @@
   "pre-commit": [
     "test"
   ],
+  "engines": {
+    "node": ">=12.22.1"
+  },
   "dependencies": {
     "argparse": "^2.0.1",
     "globby": "^11.0.3",
