@@ -79,8 +79,8 @@ let scriptNameToUrl = {}; // Used to get 'patterns' URL for each script
 const preCleanup = async () => {
   // Check if policy JSON file exists
   await fs.access(policyJsonFile, constants.F_OK).catch(() => {
-    console.error('ERROR: ' + policyJsonFile + ' not found!');
-    process.exit(1);
+    const errMsg = policyJsonFile + ' not found!';
+    throw new Error(errMsg);
   });
   debug && console.debug('Cleaning up generated directories...');
   // Remove generated directory if it exists and create new
@@ -96,29 +96,24 @@ const readGraphFiles = async graphsDir => {
 };
 
 const generateGraphs = async (retriesLeft, graphsDir, readLocal) => {
+  let errorMsg;
   if (readLocal) {
     const graphFiles = await readGraphFiles(graphsDir);
     if (graphFiles.length == 0) {
-      console.error('ERROR: No files found in ' + graphsDir + ' that end with .graphml');
-      await fs.rmdir(outputDir, { force: true, recursive: true });
-      process.exit(1);
+      errorMsg = 'No files found in ' + graphsDir + ' that end with .graphml';
+      throw new Error(errorMsg);
     }
     return graphFiles;
   }
   if (retriesLeft == 0) {
-    console.error(
-      'ERROR: Tried generating graphs using pagegraph-crawl ' + maxRetries + 'x but failed!'
-    );
-    await fs.rmdir(outputDir, { force: true, recursive: true });
-    process.exit(1);
+    errorMsg = 'Tried generating graphs using pagegraph-crawl ' + maxRetries + 'x but failed!';
+    throw new Error(errorMsg);
   }
   if (!binary || !crawlUrl) {
-    console.error(
-      'ERROR: Must provide path to PageGraph-enabled browser binary (via --binary)' +
-        ' and url (via --url) in order to record graphs'
-    );
-    await fs.rmdir(outputDir, { force: true, recursive: true });
-    process.exit(1);
+    errorMsg =
+      'Must provide path to PageGraph-enabled browser binary (via --binary)' +
+      ' and url (via --url) in order to record graphs';
+    throw new Error(errorMsg);
   }
   const cmd =
     'node node_modules/pagegraph-crawl/built/run.js  --binary "' +
@@ -276,16 +271,15 @@ const postCleanup = async () => {
 };
 
 (async () => {
-  try {
-    await preCleanup();
-    const graphsDirToUse = graphsDirOverride ? graphsDirOverride : graphsDir;
-    const readLocal = !!graphsDirOverride;
-    const graphFiles = await generateGraphs(maxRetries, graphsDirToUse, readLocal);
-    await getSources(graphFiles, graphsDirToUse);
-    await massageConfig(graphsDirToUse);
-    await runSugarCoat();
-    await postCleanup();
-  } catch (err) {
-    console.error('ERROR while running sugarcoat-pipeline: ' + err);
-  }
-})().catch(err => console.error('ERROR: while running sugarcoat-pipeline: ' + err));
+  await preCleanup();
+  const graphsDirToUse = graphsDirOverride ? graphsDirOverride : graphsDir;
+  const readLocal = !!graphsDirOverride;
+  const graphFiles = await generateGraphs(maxRetries, graphsDirToUse, readLocal);
+  await getSources(graphFiles, graphsDirToUse);
+  await massageConfig(graphsDirToUse);
+  await runSugarCoat();
+  await postCleanup();
+})().catch(err => {
+  console.error(err.message);
+  fs.rmdir(outputDir, { force: true, recursive: true });
+});
