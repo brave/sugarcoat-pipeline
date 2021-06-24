@@ -4,12 +4,12 @@ import { expect } from 'chai';
 import * as path from 'path';
 
 const testDirBase = path.resolve(path.join('test', 'cases'));
-const genDir = 'gen';
-const rules = path.join(genDir, '/sugarcoat_rules.txt');
-const scripts = path.join(genDir, '/sugarcoated_scripts');
+const outputDir = 'output';
+const rules = path.join(outputDir, '/sugarcoat_rules.txt');
+const scripts = path.join(outputDir, '/sugarcoated_scripts');
 
 afterEach('Clean up gen/', () => {
-  fs.rmdirSync(genDir, { recursive: true, force: true });
+  fs.rmdirSync(outputDir, { recursive: true, force: true });
 });
 
 describe('SugarCoat Pipeline CLI', () => {
