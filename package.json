@@ -2,7 +2,7 @@
   "name": "sugarcoat-pipeline",
   "version": "0.1.0",
   "description": "SugarCoat pipeline CLI",
-  "main": "run.js",
+  "main": "sugarcoat-pipeline",
   "scripts": {
     "sugarcoat-pipeline": "node sugarcoat-pipeline.js",
     "fmt": "prettierx --write \"*.js\" \"**/*.js\"",
@@ -16,6 +16,7 @@
     "node": ">=12.22.1"
   },
   "dependencies": {
+    "adblock-rs": "^0.3.15",
     "argparse": "^2.0.1",
     "globby": "^11.0.3",
     "pagegraph-crawl": "brave-experiments/pagegraph-crawl",

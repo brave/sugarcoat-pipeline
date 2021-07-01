@@ -1,6 +1,7 @@
 {
     "policy": {
         "include": [
+            "Window#Storage",
             "Document#cookie",
             "Window#fetch",
             "Window#localStorage",
