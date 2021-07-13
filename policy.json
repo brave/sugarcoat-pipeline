@@ -6,7 +6,8 @@
             "Window#fetch",
             "Window#localStorage",
             "Window#sessionStorage",
-            "Window#XMLHttpRequest"
+            "Window#XMLHttpRequest",
+            "XMLHttpRequest"
         ]
     }
 }

@@ -43,11 +43,6 @@ unzip pagegraph-linux-amd64.zip -d pagegraph-linux-amd64
 rm pagegraph-linux-amd64.zip
 ```
 
-You'll also need `xvfb` on Linux to run `pagegraph`. 
-```bash
-sudo apt install xvfb
-```
-
 5. (optional) You will need a local copy of a filter list - you can get the latest copy of the easylist filterlist [here](https://easylist.to/easylist/easylist.txt), easyprivacy [here](https://easylist.to/easylist/easyprivacy.txt) or uBlockOrigin Unbreak [here](https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/unbreak.txt). Alternatively, there's copies in the repo. 
 
 ```bash

@@ -164,6 +164,7 @@ const generateGraphs = async (retriesLeft, graphsDir, readLocal) => {
     binary +
     '" --secs ' +
     secs +
+    ' --interactive' +
     ' --shields down' +
     ' --url ' +
     crawlUrl +
@@ -184,7 +185,7 @@ const getSources = async (graphFiles, graphsDir) => {
         process.platform === 'win32' ? 'pagegraph-cli.exe' : 'pagegraph-cli'
       );
       const pagegraphBinaryArgs = ['-f', path.join(graphsDir, graphFile)];
-      const options = { windowsHide: true };
+      const options = { windowsHide: false };
       await Promise.all(
         filterlists.map(async filterlist => {
           const adblockArgs = [...pagegraphBinaryArgs, 'adblock_rules', '-l', filterlist];
@@ -248,7 +249,12 @@ const getSources = async (graphFiles, graphsDir) => {
                 return;
               }
               const parsedUrl = new URL(origUrl);
-              let scriptName = path.basename(parsedUrl.pathname, '.js');
+              const pathName = parsedUrl.pathname;
+              let scriptName = path.basename(pathName, '.js');
+              if (scriptName === '') {
+                // We didn't get anything from pathname, just use hostname
+                scriptName = path.basename(parsedUrl.hostname);
+              }
               let source = jsonOutput.source;
               const scriptFilePath = path.join(scriptsDir, scriptName + '.js');
               let unusedScriptFilename = await unusedFilename(scriptFilePath, {
