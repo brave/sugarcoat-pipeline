@@ -14,7 +14,7 @@ const execFileAsync = promisify(execFile);
 const defaultCrawlSecs = 30;
 const defaultPolicyJson = 'policy.json';
 const defaultOutputDir = 'output';
-const defaultSamples = 3;
+const defaultRetries = 5;
 
 // Parser options
 const parser = new argparseLib.ArgumentParser({
@@ -59,10 +59,10 @@ parser.add_argument('-k', '--keep', {
   action: 'store_true',
   default: false,
 });
-parser.add_argument('-s', '--samples', {
-  help: `Number of times a URL is attempted to be crawled. Default: ${defaultSamples}`,
+parser.add_argument('-r', '--retries', {
+  help: `Number of times a URL is attempted to be re-crawled on failure. Default: ${defaultRetries}`,
   type: 'int',
-  default: defaultSamples,
+  default: defaultRetries,
 });
 
 const args = parser.parse_args();
@@ -73,7 +73,7 @@ const filterlists = args.filter_lists;
 const debug = args.debug;
 const secs = args.secs;
 const keep = args.keep;
-const samples = args.samples;
+const retries = args.retries;
 const graphsDirOverride = args.graphs_dir_override ? path.resolve(args.graphs_dir_override) : null;
 // Directory paths
 const outputDir = path.resolve(args.output);
@@ -139,13 +139,12 @@ const preCheckAndClean = async () => {
   if (!graphsDirOverride) fs.mkdir(graphsDir, { recursive: true });
 };
 
-const generateGraphs = async (retriesLeft, graphsDir, readLocal) => {
-  let errorMsg;
+const generateGraphs = async (graphsDir, readLocal, retriesLeft) => {
   if (readLocal || retriesLeft == 0) {
     // Graph files should exist at this point. If not, then error.
     const graphFiles = await readGraphFiles(graphsDir);
     if (graphFiles.length == 0) {
-      errorMsg = 'No files found in ' + graphsDir + ' that end with .graphml';
+      const errorMsg = `No files found in ${graphsDir} that end with .graphml, exiting`;
       throw new Error(errorMsg);
     }
     debug && console.debug(graphFiles);
@@ -172,8 +171,15 @@ const generateGraphs = async (retriesLeft, graphsDir, readLocal) => {
     graphsDir;
   debug && console.debug('Running pagegraph-crawl with command: ' + cmd);
   await execAsync(cmd);
-  const newRetriesLeft = retriesLeft - 1;
-  return generateGraphs(newRetriesLeft, graphsDir, readLocal);
+  // Graph files should exist at this point. If not, then retry.
+  const graphFiles = await readGraphFiles(graphsDir);
+  if (graphFiles.length == 0) {
+    debug && console.debug(`No files found in ${graphsDir} that end with .graphml, retrying...`);
+    return generateGraphs(graphsDir, readLocal, retriesLeft - 1);
+  }
+  debug && console.debug(graphFiles);
+  debug && console.debug('Pagegraph-crawl done!');
+  return graphFiles;
 };
 
 const getSources = async (graphFiles, graphsDir) => {
@@ -343,7 +349,7 @@ const postCleanup = async () => {
   await preCheckAndClean();
   const graphsDirToUse = graphsDirOverride ? graphsDirOverride : graphsDir;
   const readLocal = !!graphsDirOverride;
-  const graphFiles = await generateGraphs(samples, graphsDirToUse, readLocal);
+  const graphFiles = await generateGraphs(graphsDirToUse, readLocal, retries);
   await getSources(graphFiles, graphsDirToUse);
   await massageConfig(graphsDirToUse);
   await runSugarCoat();
