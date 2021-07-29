@@ -25,7 +25,7 @@ npm install
 
 Note that the minimum Node version required is 12.
 
-4. You will also need a working PageGraph binary (an instrumented version of the Brave browser) to crawl the website you want to sugarcoat and generate `.graphml` files that are then analyzed for scripts. You can [build a binary following the wiki instructions](https://github.com/brave/brave-browser/wiki/PageGraph), or you can download one for Intel Macs or Linux amd64 from the [Release page here](https://github.com/brave-experiments/sugarcoat-pipeline/releases/latest). Remember to unzip it! Alternatively, on the command line:
+4. You will also need a working PageGraph binary (an instrumented version of the Brave browser) to crawl the website you want to sugarcoat and generate `.graphml` files that are then analyzed for scripts. You can [build a binary following the wiki instructions](https://github.com/brave/brave-browser/wiki/PageGraph), or you can download one for Intel Macs from the [Release page here](https://github.com/brave-experiments/sugarcoat-pipeline/releases/latest). Remember to unzip it! Alternatively, on the command line:
 
 #### For Mac
 ```bash
@@ -33,14 +33,6 @@ Note that the minimum Node version required is 12.
 curl -L https://github.com/brave-experiments/sugarcoat-pipeline/releases/latest/download/pagegraph-mac-intel.zip -o pagegraph-mac-intel.zip
 unzip pagegraph-mac-intel.zip
 rm pagegraph-mac-intel.zip
-```
-
-#### For Linux
-```bash
-# Download the latest Linux amd64 zip (and follow redirect)
-curl -L https://github.com/brave-experiments/sugarcoat-pipeline/releases/latest/download/pagegraph-linux-amd64.zip -o pagegraph-linux-amd64.zip
-unzip pagegraph-linux-amd64.zip -d pagegraph-linux-amd64
-rm pagegraph-linux-amd64.zip
 ```
 
 5. (optional) You will need a local copy of a filter list - you can get the latest copy of the easylist filterlist [here](https://easylist.to/easylist/easylist.txt), easyprivacy [here](https://easylist.to/easylist/easyprivacy.txt) or uBlockOrigin Unbreak [here](https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/unbreak.txt). Alternatively, there's copies in the repo. 
@@ -61,24 +53,20 @@ The filterlists can be space-separated i.e. `-l easylist.txt unbreak.txt`.
 
 #### For Mac
 ```bash
-npm run sugarcoat-pipeline  -- -b pagegraph-mac-intel.app/Contents/MacOS/Brave\ Browser\ Development -u https://metacritic.com  -t 5 -l easylist.txt unbreak.txt
+npm run sugarcoat-pipeline  -- -b pagegraph-mac-intel.app/Contents/MacOS/Brave\ Browser\ Development   -t 10 -l easylist.txt unbreak.txt easyprivacy.txt -o output -u https://metacritic.com 
 ```
 (note that on macOS the binary has to be the executable under the `.app`).
 
-#### For Linux
-```bash
-npm run sugarcoat-pipeline  -- -b pagegraph-linux-amd64/brave -u https://metacritic.com  -t 5 -l easylist.txt unbreak.txt easyprivacy.txt
-```
+Now check `output/` (is auto-generated).
 
 ### Help
 ```bash
 $ npm run sugarcoat-pipeline -- -h
 
-> sugarcoat-pipeline@0.1.0 sugarcoat-pipeline /Users/shivan/work/sugarcoat-experiments/sugarcoat-pipeline
+> sugarcoat-pipeline@0.1.0 sugarcoat-pipeline /Users/shivan/work/sugarcoat-experiments/test-sugarcoat-pipeline
 > node sugarcoat-pipeline.js "-h"
 
-usage: sugarcoat-pipeline.js [-h] [-b BINARY] [-u URL] [-t SECS] [-d] -l FILTER_LISTS [FILTER_LISTS ...] [-p POLICY]
-                             [-o OUTPUT] [-g GRAPHS_DIR_OVERRIDE] [-k] [-s SAMPLES]
+usage: sugarcoat-pipeline.js [-h] [-b BINARY] [-u URL] [-t SECS] [-d] -l FILTER_LISTS [FILTER_LISTS ...] [-p POLICY] [-o OUTPUT] [-g GRAPHS_DIR_OVERRIDE] [-k] [-r RETRIES]
 
 SugarCoat pipeline CLI
 
@@ -98,8 +86,8 @@ optional arguments:
   -g GRAPHS_DIR_OVERRIDE, --graphs-dir-override GRAPHS_DIR_OVERRIDE
                         Path to graphs directory. If set, skips PageGraph generation
   -k, --keep            Do not erase intermediary files generated in output for sugarcoat
-  -s SAMPLES, --samples SAMPLES
-                        Number of times a URL is attempted to be crawled. Default: 3
+  -r RETRIES, --retries RETRIES
+                        Number of times a URL is attempted to be re-crawled on failure. Default: 5
 ```
 
 ## Feedback
