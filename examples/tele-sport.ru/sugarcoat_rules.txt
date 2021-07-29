@@ -1,0 +1,1 @@
+https://an.yandex.ru/system/video-ads-sdk/adsdk.js$script,important,redirect=sugarcoat-adsdk

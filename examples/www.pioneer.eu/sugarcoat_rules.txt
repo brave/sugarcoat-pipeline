@@ -1,0 +1,2 @@
+https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics
+https://bat.bing.com/bat.js$script,important,redirect=sugarcoat-bat

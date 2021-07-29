@@ -1,0 +1,1 @@
+https://cdn.amplitude.com/libs/amplitude-4.5.2-min.gz.js$script,important,redirect=sugarcoat-amplitude-4.5.2-min.gz

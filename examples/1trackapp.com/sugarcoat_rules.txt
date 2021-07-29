@@ -1,0 +1,2 @@
+https://1trackapp.com/static/tracking/app.js$script,important,redirect=sugarcoat-app
+https://1trackapp.com/static/tracking/js/chunk-vendors.js$script,important,redirect=sugarcoat-chunk-vendors

@@ -1,0 +1,5 @@
+https://quantcast.mgr.consensu.org/tcfv2/23/cmp2.js?referer=www.broadsheet.com.au$script,important,redirect=sugarcoat-cmp2
+https://cdn.fuseplatform.net/publift/tags/2/2013/fuse.js$script,important,redirect=sugarcoat-fuse
+https://publift-com.videoplayerhub.com/galleryplayer.js$script,important,redirect=sugarcoat-galleryplayer
+https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
+https://securepubads.g.doubleclick.net/gpt/pubads_impl_2021072403.js$script,important,redirect=sugarcoat-pubads_impl_2021072403

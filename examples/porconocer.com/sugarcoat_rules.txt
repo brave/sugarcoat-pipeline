@@ -1,0 +1,2 @@
+https://quantcast.mgr.consensu.org/tcfv2/cmp2.js$script,important,redirect=sugarcoat-cmp2
+https://quantcast.mgr.consensu.org/tcfv2/32/cmp2ui-es.js$script,important,redirect=sugarcoat-cmp2ui-es

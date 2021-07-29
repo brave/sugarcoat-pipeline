@@ -1,0 +1,3 @@
+https://quantcast.mgr.consensu.org/tcfv2/cmp2.js?referer=www.indy100.com$script,important,redirect=sugarcoat-cmp2
+https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
+https://securepubads.g.doubleclick.net/gpt/pubads_impl_2021072403.js$script,important,redirect=sugarcoat-pubads_impl_2021072403

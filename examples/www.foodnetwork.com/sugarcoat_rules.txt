@@ -1,0 +1,5 @@
+https://assets.adobedtm.com/extensions/EPbde2f7ca14e540399dcc1f8208860b7b/AppMeasurement.min.js$script,important,redirect=sugarcoat-AppMeasurement.min
+https://assets.adobedtm.com/extensions/EPbde2f7ca14e540399dcc1f8208860b7b/AppMeasurement_Module_AudienceManagement.min.js$script,important,redirect=sugarcoat-AppMeasurement_Module_AudienceManagement.min
+https://cdn-magiclinks.trackonomics.net/client/static/v2/discovery_gjS38Lk6t_food_network.js$script,important,redirect=sugarcoat-discovery_gjS38Lk6t_food_network
+https://connect.facebook.net/en_US/fbevents.js$script,important,redirect=sugarcoat-fbevents
+https://assets.adobedtm.com/launch-ENe37f8b8d568443619b43fb72877cfc3d.min.js$script,important,redirect=sugarcoat-launch-ENe37f8b8d568443619b43fb72877cfc3d.min

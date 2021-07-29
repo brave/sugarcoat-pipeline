@@ -1,0 +1,2 @@
+https://cdn.cookielaw.org/scripttemplates/6.14.0/otBannerSdk.js$script,important,redirect=sugarcoat-otBannerSdk
+https://cdn.cookielaw.org/scripttemplates/otSDKStub.js$script,important,redirect=sugarcoat-otSDKStub

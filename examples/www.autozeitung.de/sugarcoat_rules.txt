@@ -1,0 +1,4 @@
+https://c.amazon-adsystem.com/aax2/apstag.js$script,important,redirect=sugarcoat-apstag
+https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
+https://cdn.stroeerdigitalgroup.de/metatag/live/bauer-autozeitung/metaTag.min.js$script,important,redirect=sugarcoat-metaTag.min
+https://cdn-a.yieldlove.com/yieldlove-bidder-stroeer.js?autozeitung.de$script,important,redirect=sugarcoat-yieldlove-bidder-stroeer

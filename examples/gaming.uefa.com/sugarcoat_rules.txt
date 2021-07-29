@@ -1,0 +1,1 @@
+https://www.googletagservices.com/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt

@@ -1,0 +1,4 @@
+https://gdpr.privacymanager.io/1/gdpr.bundle.js$script,important,redirect=sugarcoat-gdpr.bundle
+https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
+https://massariuscdn.com/prod/prebid5.1.0.js$script,important,redirect=sugarcoat-prebid5.1.0
+https://securepubads.g.doubleclick.net/gpt/pubads_impl_2021072403.js$script,important,redirect=sugarcoat-pubads_impl_2021072403

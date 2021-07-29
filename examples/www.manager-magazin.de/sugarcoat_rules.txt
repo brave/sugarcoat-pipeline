@@ -1,0 +1,3 @@
+https://assets.adobedtm.com/extensions/EPbde2f7ca14e540399dcc1f8208860b7b/AppMeasurement_Module_AudienceManagement.min.js$script,important,redirect=sugarcoat-AppMeasurement_Module_AudienceManagement.min
+https://script.ioam.de/iam.js?m=1$script,important,redirect=sugarcoat-iam
+https://assets.adobedtm.com/cc10f7b4369d/042e1bbcbda1/launch-1580a2831dff.min.js$script,important,redirect=sugarcoat-launch-1580a2831dff.min

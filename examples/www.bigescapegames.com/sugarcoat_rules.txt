@@ -1,0 +1,3 @@
+https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
+https://imasdk.googleapis.com/js/sdkloader/ima3.js$script,important,redirect=sugarcoat-ima3
+https://api.adinplay.com/libs/aiptag/pub/BCG/bigescapegames.com/tag.min.js$script,important,redirect=sugarcoat-tag.min

@@ -1,0 +1,2 @@
+https://at.adtech.redventures.io/lib/dist/prod/bidbarrel-gamespot-rv.min.js$script,important,redirect=sugarcoat-bidbarrel-gamespot-rv.min
+https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt

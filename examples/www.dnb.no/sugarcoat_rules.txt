@@ -1,0 +1,2 @@
+https://dnb.celebrus.tech-03.net/JavascriptInsert.js$script,important,redirect=sugarcoat-JavascriptInsert
+https://assets.adobedtm.com/launch-ENabbbd2c3cb0e4f5f8591b5bbac1280ff.min.js$script,important,redirect=sugarcoat-launch-ENabbbd2c3cb0e4f5f8591b5bbac1280ff.min

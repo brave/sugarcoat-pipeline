@@ -1,0 +1,2 @@
+https://www.glenat.com/sites/default/files/liseuse/9782344037836/files/html/static/analytics.js?uni=f0b31226baa3d7aacfe8252af08fdcf8$script,important,redirect=sugarcoat-analytics
+https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics_1

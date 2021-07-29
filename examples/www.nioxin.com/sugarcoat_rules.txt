@@ -1,0 +1,2 @@
+https://assets.adobedtm.com/6dbccae18e8a/42dfc65a62f5/launch-4ec4a28b15b7.min.js$script,important,redirect=sugarcoat-launch-4ec4a28b15b7.min
+https://a1.adform.net/serving/scripts/trackpoint/$script,important,redirect=sugarcoat-trackpoint

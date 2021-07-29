@@ -1,0 +1,2 @@
+https://static.foxnews.com/static/isa/app/lib/VisitorAPI.js$script,important,redirect=sugarcoat-VisitorAPI
+https://c.amazon-adsystem.com/aax2/apstag.js$script,important,redirect=sugarcoat-apstag

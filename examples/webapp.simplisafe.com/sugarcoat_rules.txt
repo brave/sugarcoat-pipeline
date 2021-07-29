@@ -1,0 +1,1 @@
+https://webapp.simplisafe.com/338f3024e214_res/libs/angulartics-google-analytics/0.3.0/angulartics-ga.min.js$script,important,redirect=sugarcoat-angulartics-ga.min

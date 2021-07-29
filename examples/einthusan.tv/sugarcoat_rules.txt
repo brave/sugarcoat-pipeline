@@ -1,0 +1,4 @@
+https://d2wy8f7a9ursnm.cloudfront.net/v4/bugsnag.min.js$script,important,redirect=sugarcoat-bugsnag.min
+https://quantcast.mgr.consensu.org/tcfv2/cmp2.js?referer=einthusan.tv$script,important,redirect=sugarcoat-cmp2
+https://quantcast.mgr.consensu.org/tcfv2/32/cmp2ui-en.js$script,important,redirect=sugarcoat-cmp2ui-en
+https://einthusan.tv/prebid.js?v=226$script,important,redirect=sugarcoat-prebid

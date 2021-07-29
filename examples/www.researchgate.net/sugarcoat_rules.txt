@@ -1,0 +1,1 @@
+https://quantcast.mgr.consensu.org/tcfv2/23/cmp2.js$script,important,redirect=sugarcoat-cmp2

@@ -1,0 +1,3 @@
+https://adc-js.nine.com.au/adc.js$script,important,redirect=sugarcoat-adc
+https://share.9cdn.net/share/short_cache/js/gdpr/gdpr.js$script,important,redirect=sugarcoat-gdpr
+https://share.9cdn.net/share/long_cache/js/tracking/tracking.4.0.328.min.js$script,important,redirect=sugarcoat-tracking.4.0.328.min

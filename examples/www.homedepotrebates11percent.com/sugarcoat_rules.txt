@@ -1,0 +1,1 @@
+https://www.homedepotrebates11percent.com/js/third-party/angulartics-google-analytics/dist/angulartics-ga.min.js$script,important,redirect=sugarcoat-angulartics-ga.min
