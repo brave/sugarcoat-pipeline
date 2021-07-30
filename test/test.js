@@ -6,6 +6,7 @@ import * as path from 'path';
 const testDirBase = path.resolve(path.join('test', 'cases'));
 const outputDir = 'output';
 const rules = path.join(outputDir, '/sugarcoat_rules.txt');
+const trace = path.join(outputDir, '/sugarcoat_trace.json');
 const scripts = path.join(outputDir, '/scripts');
 const sugarcoat_scripts = path.join(outputDir, '/sugarcoat_scripts');
 const DEBUG = process.env.DEBUG;
@@ -45,6 +46,7 @@ describe('SugarCoat Pipeline CLI', () => {
     let rulesString =
       'https://localhost:8080/script1.js$script,important,redirect=sugarcoat-script1\n' +
       'https://localhost:8080/script2.js$script,important,redirect=sugarcoat-script2';
+    DEBUG && console.log(fs.readFileSync(trace, 'UTF-8'));
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
   });
 
