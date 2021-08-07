@@ -1,2 +1,2 @@
-https://catalogue.jbhifi.com.au/2021/05/13-may-smh/files/html/static/analytics.js?uni=d24c14c41fced81d98681838fb7256a7$script,important,redirect=sugarcoat-analytics
-https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics_1
+https://catalogue.jbhifi.com.au/2021/05/13-may-smh/files/html/static/analytics.js?uni=d24c14c41fced81d98681838fb7256a7$script,important,redirect=sugarcoat-catalogue-jbhifi-analytics
+https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics
