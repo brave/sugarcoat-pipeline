@@ -9,6 +9,8 @@ import globby from 'globby';
 import unusedFilename from 'unused-filename';
 import uglify from 'uglify-js';
 import crypto from 'crypto';
+import psl from 'psl';
+import os from 'os';
 
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);
@@ -159,6 +161,10 @@ const generateGraphs = async (graphsDir, readLocal, retriesLeft) => {
     const graphFiles = await readGraphFiles(graphsDir);
     if (graphFiles.length == 0) {
       const errorMsg = `No files found in ${graphsDir} that end with .graphml, exiting`;
+      throw new Error(errorMsg);
+    }
+    if (!crawlUrl) {
+      const errorMsg = 'Must provide url (via --url)';
       throw new Error(errorMsg);
     }
     debug && console.debug(graphFiles);
@@ -337,28 +343,77 @@ const getHashOfFile = async filename => {
   return hash;
 };
 
-const getNewNameForFile = async filename => {
-  let scriptName;
-  if (useHashForName) {
-    // Rename file to be hash of script contents
-    const hash = await getHashOfFile(filename);
-    scriptName = `sugarcoat-${hash}.js`;
+const getDomainOrHost = async (url, getPort) => {
+  let host;
+  if (getPort) {
+    host = new URL(url).host;
   } else {
-    scriptName = path.basename(filename);
+    host = new URL(url).hostname;
   }
-  return scriptName;
+  let domain = psl.get(host);
+  return !domain ? host : domain;
 };
 
-const postCleanup = async () => {
+const tweakRules = async oldNamesToNewNames => {
+  debug && console.debug('Tweaking rules file');
+  const file = await fs.readFile(rulesFile, 'UTF-8');
+  const rules = file.toString().split(os.EOL);
+  const pageDomain = await getDomainOrHost(crawlUrl, false);
+  const pcdnBasePath = 'https://pcdn.brave.com/sugarcoat';
+  let newRules = [];
+  await Promise.all(
+    rules.map(async rule => {
+      // 1. Only use domain
+      const parts = rule.split('$');
+      if (!parts) {
+        newRules.push(rule);
+        return;
+      }
+      const scriptUrl = parts[0];
+      const filterOptions = parts[1];
+      const scriptUrlPath = new URL(scriptUrl).pathname;
+      const scriptDomain = await getDomainOrHost(scriptUrl, true);
+      const filterOptionsParts = filterOptions.split('redirect=');
+      let sugarcoatScriptName = filterOptionsParts[1];
+      const restOfFilterOptions = filterOptionsParts[0];
+      if (sugarcoatScriptName in oldNamesToNewNames) {
+        sugarcoatScriptName = oldNamesToNewNames[sugarcoatScriptName];
+      }
+      // 2. Change redirect=<scriptname> to redirect-url=https://pcdn.brave.com/sugarcoat/<scriptname>
+      // 3. Add domain= option
+      const newOptions = `${restOfFilterOptions}domain=${pageDomain},redirect-url=${pcdnBasePath}/${sugarcoatScriptName}`;
+      debug && console.debug(`New filter options are ${newOptions}`);
+      newRules.push(`||${scriptDomain}${scriptUrlPath}$${newOptions}${os.EOL}`);
+    })
+  );
+  // Write new rules file
+  fs.writeFile(rulesFile, newRules);
+};
+
+const postProcessing = async () => {
   // Move generated scripts out of output/ and into sugarcoatedScriptsDir
   const sugarcoatedScripts = await globby(path.join(scriptsDir, '/sugarcoat-*.js'));
   await fs.mkdir(sugarcoatedScriptsDir, { recursive: true });
+  let oldNamesToNewNames = {};
   await Promise.all(
     sugarcoatedScripts.map(async sugarcoatedScript => {
-      const newName = await getNewNameForFile(sugarcoatedScript);
-      fs.rename(sugarcoatedScript, path.join(sugarcoatedScriptsDir, newName));
+      let scriptName;
+      if (useHashForName) {
+        // Rename file to be hash of script contents
+        const hash = await getHashOfFile(sugarcoatedScript);
+        scriptName = `sugarcoat-${hash}.js`;
+        debug && console.debug(`New script name for ${sugarcoatedScript} is ${scriptName}`);
+        // The sugarcoat package generates the redirect option as $...redirect=filename without the .js extension
+        oldNamesToNewNames[path.basename(sugarcoatedScript).split('.js')[0]] = scriptName;
+      } else {
+        scriptName = path.basename(sugarcoatedScript);
+      }
+      fs.rename(sugarcoatedScript, path.join(sugarcoatedScriptsDir, scriptName));
     })
   );
+  debug && console.debug(oldNamesToNewNames);
+  await tweakRules(oldNamesToNewNames);
+
   // Keep only essential files: rules.txt and sugarcoatedScriptsDir unless --keep
   if (!keep) {
     await fs.rm(scriptsDir, { recursive: true, force: true });
@@ -382,10 +437,7 @@ const minifyScripts = async () => {
       // Read in file
       const src = await fs.readFile(sugarcoatedScript, 'UTF-8');
       const minified = uglify.minify(src);
-      // Rewrite file name
       await fs.writeFile(sugarcoatedScript, minified.code);
-      const newName = await getNewNameForFile(sugarcoatedScript);
-      fs.rename(sugarcoatedScript, path.join(sugarcoatedScriptsDir, newName));
     })
   );
 };
@@ -401,7 +453,7 @@ const minifyScripts = async () => {
   await getSources(graphFiles, graphsDirToUse);
   await massageConfig(graphsDirToUse);
   await runSugarCoat();
-  await postCleanup();
+  await postProcessing();
   if (minify) {
     await minifyScripts();
   }

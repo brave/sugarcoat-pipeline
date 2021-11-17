@@ -20,6 +20,7 @@
     "argparse": "^2.0.1",
     "globby": "^11.0.3",
     "pagegraph-crawl": "brave-experiments/pagegraph-crawl",
+    "psl": "^1.8.0",
     "shelljs": "^0.8.4",
     "sugarcoat": "brave-experiments/sugarcoat",
     "uglify-js": "^3.14.3",
