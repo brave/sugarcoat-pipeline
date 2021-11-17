@@ -1,3 +1,0 @@
-https://bat.bing.com/bat.js$script,important,redirect=sugarcoat-bat
-https://www.googletagmanager.com/gtm.js?id=GTM-TSH57VL$script,important,redirect=sugarcoat-gtm
-https://rum-static.pingdom.net/pa-5ce7fcc1e98940001600021c.js$script,important,redirect=sugarcoat-pa-5ce7fcc1e98940001600021c

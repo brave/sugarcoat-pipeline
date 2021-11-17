@@ -1,4 +1,0 @@
-https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
-https://s.yimg.jp/l/ext/jquery/1.11.2/jquery.min.js$script,important,redirect=sugarcoat-jquery.min
-https://s.yimg.jp/images/sports/all_device/common/js/jquery.spnavi-1.0.6.min.js$script,important,redirect=sugarcoat-jquery.spnavi-1.0.6.min
-https://securepubads.g.doubleclick.net/gpt/pubads_impl_2021072403.js$script,important,redirect=sugarcoat-pubads_impl_2021072403

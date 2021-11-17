@@ -1,2 +1,0 @@
-https://cd.connatix.com/connatix.player.js$script,important,redirect=sugarcoat-connatix.player
-https://ads.pubmatic.com/AdServer/js/userSync.js$script,important,redirect=sugarcoat-userSync

@@ -1,1 +1,0 @@
-https://cdn.dynamicyield.com/api/8769189/api_static.js$script,important,redirect=sugarcoat-api_static

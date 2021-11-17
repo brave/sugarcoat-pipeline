@@ -1,8 +1,0 @@
-https://b-code.liadm.com/a-057o.min.js$script,important,redirect=sugarcoat-a-057o.min
-https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics
-https://bat.bing.com/bat.js$script,important,redirect=sugarcoat-bat
-https://connect.facebook.net/en_US/fbevents.js$script,important,redirect=sugarcoat-fbevents
-https://www.googletagservices.com/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
-https://assets.adobedtm.com/c0857d0b892a/fccd631ba54c/launch-68b2fecf2e9e.min.js$script,important,redirect=sugarcoat-launch-68b2fecf2e9e.min
-https://securepubads.g.doubleclick.net/gpt/pubads_impl_2021070101.js$script,important,redirect=sugarcoat-pubads_impl_2021070101
-https://securepubads.g.doubleclick.net/gpt/pubads_impl_2021070701.js?31061757$script,important,redirect=sugarcoat-pubads_impl_2021070701

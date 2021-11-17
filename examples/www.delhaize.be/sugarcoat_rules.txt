@@ -1,2 +1,0 @@
-https://connect.facebook.net/en_US/fbevents.js$script,important,redirect=sugarcoat-fbevents
-https://assets.adobedtm.com/cb7c8da1ae6b/1824a59f4c3f/launch-a6c2537cff5a.min.js$script,important,redirect=sugarcoat-launch-a6c2537cff5a.min

@@ -1,2 +1,0 @@
-https://at.adtech.redventures.io/lib/dist/prod/bidbarrel-metacritic-rv.min.js$script,important,redirect=sugarcoat-bidbarrel-metacritic-rv.min
-https://z.moatads.com/redventuresgamheader644747280705/moatheader.js$script,important,redirect=sugarcoat-moatheader

@@ -1,1 +1,0 @@
-https://production-cmp.isgprivacy.cbsi.com/dist/optanon-v1.1.0.js$script,important,redirect=sugarcoat-optanon-v1.1.0

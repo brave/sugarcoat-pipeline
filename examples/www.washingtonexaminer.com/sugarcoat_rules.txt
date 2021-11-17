@@ -1,1 +1,0 @@
-https://cd.connatix.com/connatix.player.js$script,important,redirect=sugarcoat-connatix.player

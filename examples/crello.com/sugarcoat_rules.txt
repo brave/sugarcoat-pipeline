@@ -1,4 +1,0 @@
-https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics
-https://bat.bing.com/bat.js$script,important,redirect=sugarcoat-bat
-https://script.hotjar.com/modules.1eae5f578812029ee612.js$script,important,redirect=sugarcoat-modules.1eae5f578812029ee612
-https://cdn.taboola.com/libtrc/unip/1267090/tfa.js$script,important,redirect=sugarcoat-tfa

@@ -1,2 +1,0 @@
-https://live.house.gov/js/analytics.a113b136ebdce01cf16d.js$script,important,redirect=sugarcoat-analytics.a113b136ebdce01cf16d
-https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics

@@ -1,4 +1,0 @@
-https://nexus.ensighten.com/dell/marketing/code/67bc276bb7757cc470d69e17555ea5be.js?conditionId0=4870297$script,important,redirect=sugarcoat-67bc276bb7757cc470d69e17555ea5be
-https://nexus.ensighten.com/dell/marketing/code/b8e23a7e0740b219769303ef8b9597a0.js?conditionId0=4898113$script,important,redirect=sugarcoat-b8e23a7e0740b219769303ef8b9597a0
-https://nexus.ensighten.com/dell/marketing/code/c7a8ff300b92a4865b884947168a3d42.js?conditionId0=4876564$script,important,redirect=sugarcoat-c7a8ff300b92a4865b884947168a3d42
-https://s.yimg.com/wi/ytc.js$script,important,redirect=sugarcoat-ytc

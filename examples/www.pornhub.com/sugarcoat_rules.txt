@@ -1,6 +1,0 @@
-https://di.phncdn.com/www-static/js/lib/generated-lib.js?cache=2021072902$script,important,redirect=sugarcoat-generated-lib
-https://static.trafficjunky.com/invocation/idsync/production/idsync.min.js?v=1627542000000$script,important,redirect=sugarcoat-idsync.min
-https://di.phncdn.com/www-static/js/lib/jquery-2.1.3.min.js$script,important,redirect=sugarcoat-jquery-2.1.3.min
-https://di.phncdn.com/www-static/js/lib/utils/mg_utils-1.0.0.js?cache=2021072902$script,important,redirect=sugarcoat-mg_utils-1.0.0
-https://di.phncdn.com/www-static/js/lib/ph-functions.js?cache=2021072902$script,important,redirect=sugarcoat-ph-functions
-https://di.phncdn.com/www-static/js/premium/premium-modals.js?cache=2021072902$script,important,redirect=sugarcoat-premium-modals

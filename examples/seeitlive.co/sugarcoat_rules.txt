@@ -1,1 +1,0 @@
-https://sbly-web-prod-shareably.netdna-ssl.com/sbly-ads/sbly-prebid-v4.34.0-2021-05-27.js$script,important,redirect=sugarcoat-sbly-prebid-v4.34.0-2021-05-27

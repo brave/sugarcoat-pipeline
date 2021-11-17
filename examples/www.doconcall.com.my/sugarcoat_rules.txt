@@ -1,1 +1,0 @@
-https://browser.sentry-cdn.com/6.3.5/bundle.min.js$script,important,redirect=sugarcoat-bundle.min

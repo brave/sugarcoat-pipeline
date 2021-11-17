@@ -1,3 +1,0 @@
-https://assets.adobedtm.com/bb77750356fd/42bfe6bcc850/fbaa51d0bedc/EXdfe70594285c4d2abbd46bb8fd2e9ef6-libraryCode_source.min.js$script,important,redirect=sugarcoat-EXdfe70594285c4d2abbd46bb8fd2e9ef6-libraryCode_source.min
-https://cdn.quantummetric.com/qscripts/quantum-telegraph.js$script,important,redirect=sugarcoat-quantum-telegraph
-https://assets.adobedtm.com/71dcbb11123ce6b2e1ce4d47fd79a130aad3fc95/satelliteLib-177113f60f763788009998023cd15615fe2168a2.js$script,important,redirect=sugarcoat-satelliteLib-177113f60f763788009998023cd15615fe2168a2

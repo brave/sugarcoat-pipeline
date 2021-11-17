@@ -1,2 +1,0 @@
-https://securepubads.g.doubleclick.net/tag/js/gpt.js$script,important,redirect=sugarcoat-gpt
-https://securepubads.g.doubleclick.net/gpt/pubads_impl_2021072403.js?31062032$script,important,redirect=sugarcoat-pubads_impl_2021072403

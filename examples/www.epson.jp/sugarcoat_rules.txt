@@ -1,2 +1,0 @@
-https://s.yjtag.jp/tag.js$script,important,redirect=sugarcoat-tag
-https://s.yimg.jp/images/listing/tool/cv/ytag.js$script,important,redirect=sugarcoat-ytag

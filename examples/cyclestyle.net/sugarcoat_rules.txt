@@ -1,3 +1,0 @@
-https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics
-https://scdn.cxense.com/cx.js$script,important,redirect=sugarcoat-cx
-https://cyclestyle.net/base/scripts/jquery-2.1.3.min.js$script,important,redirect=sugarcoat-jquery-2.1.3.min

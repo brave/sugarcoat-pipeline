@@ -1,3 +1,0 @@
-https://assets.adobedtm.com/extensions/EPbde2f7ca14e540399dcc1f8208860b7b/AppMeasurement_Module_AudienceManagement.min.js$script,important,redirect=sugarcoat-AppMeasurement_Module_AudienceManagement.min
-https://assets.adobedtm.com/72afb75f5516/8609776c4c4c/launch-6dab4959fb1e.min.js$script,important,redirect=sugarcoat-launch-6dab4959fb1e.min
-https://www.samsung.com/us/smg/etc/designs/samsung/global/common/rum.19889ddb06c0cd33169da03c7ec7a1f3.js$script,important,redirect=sugarcoat-rum.19889ddb06c0cd33169da03c7ec7a1f3

@@ -1,1 +1,0 @@
-https://sourcepointcmp.bloomberg.com/ccpa.js$script,important,redirect=sugarcoat-ccpa

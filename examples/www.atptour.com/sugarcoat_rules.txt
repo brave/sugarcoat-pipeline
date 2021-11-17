@@ -1,2 +1,0 @@
-https://script.crazyegg.com/pages/scripts/0014/0351.js$script,important,redirect=sugarcoat-0351
-https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics

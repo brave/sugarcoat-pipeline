@@ -1,1 +1,0 @@
-https://ak.sail-horizon.com/spm/spm.v1.min.js$script,important,redirect=sugarcoat-spm.v1.min

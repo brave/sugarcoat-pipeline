@@ -1,3 +1,0 @@
-https://www.google-analytics.com/analytics.js$script,important,redirect=sugarcoat-analytics
-https://www.googletagmanager.com/gtm.js?id=GTM-WF9QCL2&gtm_auth=28ykelszAvyta5q5YGRVOg&gtm_preview=env-53&gtm_cookies_win=x$script,important,redirect=sugarcoat-gtm
-https://a1.nyt.com/analytics/json-kidd-no-ender.min.js$script,important,redirect=sugarcoat-json-kidd-no-ender.min

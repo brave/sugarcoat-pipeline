@@ -1,2 +1,0 @@
-https://quantcast.mgr.consensu.org/tcfv2/cmp2.js?referer=gianlucadimarzio.com$script,important,redirect=sugarcoat-cmp2
-https://assets.adobedtm.com/launch-EN578e54a3f0c6478aa41c89022e30863c.min.js$script,important,redirect=sugarcoat-launch-EN578e54a3f0c6478aa41c89022e30863c.min
