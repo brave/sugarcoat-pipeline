@@ -7,6 +7,7 @@ import * as path from 'path';
 import { promisify } from 'util';
 import globby from 'globby';
 import unusedFilename from 'unused-filename';
+import uglify from 'uglify-js';
 
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);
@@ -15,6 +16,7 @@ const defaultCrawlSecs = 30;
 const defaultPolicyJson = 'policy.json';
 const defaultOutputDir = 'output';
 const defaultRetries = 5;
+const defaultMinify = true;
 
 // Parser options
 const parser = new argparseLib.ArgumentParser({
@@ -63,6 +65,11 @@ parser.add_argument('-r', '--retries', {
   help: `Number of times a URL is attempted to be re-crawled on failure. Default: ${defaultRetries}`,
   type: 'int',
   default: defaultRetries,
+});
+parser.add_argument('-m', '--minify', {
+  help: `Minify generated SugarCoat script. Default: ${defaultMinify}`,
+  action: 'store_true',
+  default: defaultMinify,
 });
 
 const args = parser.parse_args();
@@ -125,12 +132,12 @@ const preCheckAndClean = async () => {
       }
     ),
     ...[sugarcoatedScriptsDir, scriptsDir].map(async dir =>
-      fs.rmdir(dir, { force: true, recursive: true })
+      fs.rm(dir, { force: true, recursive: true })
     ),
   ]);
   // and if not graphs dir override then graphs too
   if (graphsDirOverride !== graphsDir) {
-    await fs.rmdir(graphsDir, { force: true, recursive: true });
+    await fs.rm(graphsDir, { force: true, recursive: true });
   }
   // Check if outputDir exists. If yes, then leave it be. If no, create it.
   await checkFileExistence(outputDir).catch(_ => fs.mkdir(outputDir, { recursive: true }));
@@ -329,7 +336,7 @@ const postCleanup = async () => {
   );
   // Keep only essential files: rules.txt and sugarcoatedScriptsDir unless --keep
   if (!keep) {
-    await fs.rmdir(scriptsDir, { recursive: true, force: true });
+    await fs.rm(scriptsDir, { recursive: true, force: true });
     const filesToDelete = await globby(path.join(outputDir, '/**/*'), {
       ignore: [path.join(outputDir, '/sugarcoat_rules.txt'), sugarcoatedScriptsDir],
     });
@@ -338,8 +345,23 @@ const postCleanup = async () => {
         fs.unlink(file);
       })
     );
-    if (!graphsDirOverride) fs.rmdir(graphsDir, { recursive: true, force: true });
+    if (!graphsDirOverride) fs.rm(graphsDir, { recursive: true, force: true });
   }
+};
+
+const minify = async () => {
+  // Minify all scripts in sugarcoatedScriptsDir
+  const sugarcoatedScripts = await globby(path.join(sugarcoatedScriptsDir, '/sugarcoat-*.js'));
+  await Promise.all(
+    sugarcoatedScripts.map(async sugarcoatedScript => {
+      debug && console.debug(sugarcoatedScript);
+      // Read in file
+      const src = await fs.readFile(sugarcoatedScript, 'UTF-8');
+      const minified = uglify.minify(src);
+      debug && console.debug(minified);
+      fs.writeFile(sugarcoatedScript, minified.code);
+    })
+  );
 };
 
 /**
@@ -354,9 +376,10 @@ const postCleanup = async () => {
   await massageConfig(graphsDirToUse);
   await runSugarCoat();
   await postCleanup();
+  await minify();
 })().catch(err => {
   console.error(err.message);
   if (!keep) {
-    fs.rmdir(outputDir, { force: true, recursive: true });
+    fs.rm(outputDir, { force: true, recursive: true });
   }
 });
