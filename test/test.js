@@ -3,25 +3,29 @@ import * as fs from 'fs';
 import { expect } from 'chai';
 import * as path from 'path';
 
-const testDirBase = path.resolve(path.join('test', 'cases'));
-const outputDir = 'output';
+const testCasesDirBase = path.resolve(path.join('test', 'cases'));
+const outputDir = path.resolve(path.join('test', 'output'));
 const rules = path.join(outputDir, '/sugarcoat_rules.txt');
 const trace = path.join(outputDir, '/sugarcoat_trace.json');
 const scripts = path.join(outputDir, '/scripts');
 const sugarcoat_scripts = path.join(outputDir, '/sugarcoat_scripts');
 const DEBUG = process.env.DEBUG;
 
+beforeEach('Test set up', () => {
+  fs.mkdirSync(outputDir, { recursive: true });
+});
+
 afterEach('Clean up output', () => {
   if (!DEBUG) {
-    fs.rmdirSync(outputDir, { recursive: true, force: true });
+    fs.rmSync(outputDir, { recursive: true, force: true });
   }
 });
 
 describe('SugarCoat Pipeline CLI', () => {
   it('sugarcoats for simple case', () => {
-    const testDir = path.join(testDirBase, '/simple');
+    const testDir = path.join(testCasesDirBase, '/simple');
     const listPath = path.join(testDir, 'list.txt');
-    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath} -k`, {
+    execSync(`npm run sugarcoat-pipeline -- -s -o ${outputDir} -g ${testDir} -l ${listPath} -k`, {
       stdio: 'inherit',
     });
     // Check output/
@@ -33,9 +37,9 @@ describe('SugarCoat Pipeline CLI', () => {
   });
 
   it('sugarcoats for script pulling in script case', () => {
-    const testDir = path.join(testDirBase, '/test-script-calls-script-calls-script');
+    const testDir = path.join(testCasesDirBase, '/test-script-calls-script-calls-script');
     let listPath = path.join(testDir, 'list.txt');
-    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath} -k`, {
+    execSync(`npm run sugarcoat-pipeline -- -s -o ${outputDir} -g ${testDir} -l ${listPath} -k`, {
       stdio: 'inherit',
     });
     expect(fs.existsSync(path.join(scripts, '/script1.js'))).to.be.true;
@@ -51,10 +55,10 @@ describe('SugarCoat Pipeline CLI', () => {
   });
 
   it('handles exceptions in filter list', () => {
-    const testDir = testDirBase + '/exceptions';
+    const testDir = testCasesDirBase + '/exceptions';
     let listPath = path.join(testDir, 'list_without_exception.txt');
     // check without exception
-    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath} -k`, {
+    execSync(`npm run sugarcoat-pipeline -- -s -o ${outputDir} -g ${testDir} -l ${listPath} -k`, {
       stdio: 'inherit',
     });
     // Check output/
@@ -63,7 +67,7 @@ describe('SugarCoat Pipeline CLI', () => {
 
     // check with exception
     listPath = path.join(testDir, 'list.txt');
-    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath} -k`, {
+    execSync(`npm run sugarcoat-pipeline -- -s -o ${outputDir} -g ${testDir} -l ${listPath} -k`, {
       stdio: 'inherit',
     });
     // Check output/
@@ -75,9 +79,9 @@ describe('SugarCoat Pipeline CLI', () => {
   });
 
   it('soundcloud.com', () => {
-    const testDir = testDirBase + '/soundcloud.com';
+    const testDir = testCasesDirBase + '/soundcloud.com';
     let listPath = path.join(testDir, 'easylist.txt');
-    execSync(`npm run sugarcoat-pipeline -- -g ${testDir} -l ${listPath} -k`, {
+    execSync(`npm run sugarcoat-pipeline -- -s -o ${outputDir} -g ${testDir} -l ${listPath} -k`, {
       stdio: 'inherit',
     });
     // Check output/

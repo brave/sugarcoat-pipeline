@@ -93,3 +93,20 @@ optional arguments:
 ## Feedback
 
 Something not working? Please [raise an issue](https://github.com/brave-experiments/sugarcoat-pipeline/issues).
+
+## Testing
+
+This project uses mocha for tests.
+```bash
+npm run test
+```
+
+To run in debug mode,
+```bash
+DEBUG=true npm run test
+```
+
+To run a specific test,
+```bash
+npm run test -- -g "simple"
+```

@@ -8,6 +8,7 @@ import { promisify } from 'util';
 import globby from 'globby';
 import unusedFilename from 'unused-filename';
 import uglify from 'uglify-js';
+import crypto from 'crypto';
 
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);
@@ -16,7 +17,6 @@ const defaultCrawlSecs = 30;
 const defaultPolicyJson = 'policy.json';
 const defaultOutputDir = 'output';
 const defaultRetries = 5;
-const defaultMinify = true;
 
 // Parser options
 const parser = new argparseLib.ArgumentParser({
@@ -66,10 +66,15 @@ parser.add_argument('-r', '--retries', {
   type: 'int',
   default: defaultRetries,
 });
-parser.add_argument('-m', '--minify', {
-  help: `Minify generated SugarCoat script. Default: ${defaultMinify}`,
+parser.add_argument('-m', '--no-minify', {
+  help: `Do not minify generated SugarCoat script.`,
   action: 'store_true',
-  default: defaultMinify,
+  default: false,
+});
+parser.add_argument('-s', '--keep-original-script-name', {
+  help: `Keep original script name instead of setting it to be hash of contents.`,
+  action: 'store_true',
+  default: false,
 });
 
 const args = parser.parse_args();
@@ -82,6 +87,8 @@ const secs = args.secs;
 const keep = args.keep;
 const retries = args.retries;
 const graphsDirOverride = args.graphs_dir_override ? path.resolve(args.graphs_dir_override) : null;
+const minify = !args.no_minify;
+const useHashForName = !args.keep_original_script_name;
 // Directory paths
 const outputDir = path.resolve(args.output);
 const graphsDir = path.join(outputDir, '/graphs');
@@ -324,14 +331,32 @@ const runSugarCoat = async () => {
   debug && console.debug('Sugarcoat command finished running!');
 };
 
+const getHashOfFile = async filename => {
+  const file = await fs.readFile(filename, 'UTF-8');
+  const hash = crypto.createHash('sha1').update(file).digest('hex');
+  return hash;
+};
+
+const getNewNameForFile = async filename => {
+  let scriptName;
+  if (useHashForName) {
+    // Rename file to be hash of script contents
+    const hash = await getHashOfFile(filename);
+    scriptName = `sugarcoat-${hash}.js`;
+  } else {
+    scriptName = path.basename(filename);
+  }
+  return scriptName;
+};
+
 const postCleanup = async () => {
   // Move generated scripts out of output/ and into sugarcoatedScriptsDir
   const sugarcoatedScripts = await globby(path.join(scriptsDir, '/sugarcoat-*.js'));
   await fs.mkdir(sugarcoatedScriptsDir, { recursive: true });
   await Promise.all(
     sugarcoatedScripts.map(async sugarcoatedScript => {
-      const scriptName = path.basename(sugarcoatedScript);
-      fs.rename(sugarcoatedScript, path.join(sugarcoatedScriptsDir, scriptName));
+      const newName = await getNewNameForFile(sugarcoatedScript);
+      fs.rename(sugarcoatedScript, path.join(sugarcoatedScriptsDir, newName));
     })
   );
   // Keep only essential files: rules.txt and sugarcoatedScriptsDir unless --keep
@@ -349,17 +374,18 @@ const postCleanup = async () => {
   }
 };
 
-const minify = async () => {
+const minifyScripts = async () => {
   // Minify all scripts in sugarcoatedScriptsDir
   const sugarcoatedScripts = await globby(path.join(sugarcoatedScriptsDir, '/sugarcoat-*.js'));
   await Promise.all(
     sugarcoatedScripts.map(async sugarcoatedScript => {
-      debug && console.debug(sugarcoatedScript);
       // Read in file
       const src = await fs.readFile(sugarcoatedScript, 'UTF-8');
       const minified = uglify.minify(src);
-      debug && console.debug(minified);
-      fs.writeFile(sugarcoatedScript, minified.code);
+      // Rewrite file name
+      await fs.writeFile(sugarcoatedScript, minified.code);
+      const newName = await getNewNameForFile(sugarcoatedScript);
+      fs.rename(sugarcoatedScript, path.join(sugarcoatedScriptsDir, newName));
     })
   );
 };
@@ -376,7 +402,9 @@ const minify = async () => {
   await massageConfig(graphsDirToUse);
   await runSugarCoat();
   await postCleanup();
-  await minify();
+  if (minify) {
+    await minifyScripts();
+  }
 })().catch(err => {
   console.error(err.message);
   if (!keep) {
