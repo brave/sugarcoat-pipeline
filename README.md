@@ -1,6 +1,6 @@
 # SugarCoat Pipeline
 
-SugarCoat is a tool that allows filterlist authors to automatically patch JavaScript scripts to restrict their access to sensitive data according to a custom privacy policy. Check out the [blog post](TODO) and [paper](https://www.peteresnyder.com/static/papers/sugarcoat-ccs-2021.pdf)!
+SugarCoat is a tool that allows filterlist authors to automatically patch JavaScript scripts to restrict their access to sensitive data according to a custom privacy policy. Check out the [blog post](https://brave.com/privacy-updates/12-sugarcoat/) and [paper](https://brave.com/wp-content/uploads/2021/06/sugarcoat-ccs-2021.pdf)!
 
 This repo is an implementation of the SugarCoat pipeline. It uses [pagegraph-crawl](https://github.com/brave-experiments/pagegraph-crawl) to crawl a given website and generate PageGraph graphs, [pagegraph-rust-cli](https://github.com/brave-experiments/pagegraph-rust/tree/main/pagegraph-cli) to get JavaScript script sources that match adblock rules from the generated graphs, and [sugarcoat](https://github.com/brave-experiments/sugarcoat) for the actual patching of JavaScript scripts. 
 
@@ -23,7 +23,7 @@ cd sugarcoat-pipeline
 npm install
 ```
 
-Note that the minimum Node version required is 12.
+Note that the minimum Node version required is `14.18.1`.
 
 4. You will also need a working PageGraph binary (an instrumented version of the Brave browser) to crawl the website you want to sugarcoat and generate `.graphml` files that are then analyzed for scripts. You can [build a binary following the wiki instructions](https://github.com/brave/brave-browser/wiki/PageGraph), or you can download one for Intel Macs from the [Release page here](https://github.com/brave-experiments/sugarcoat-pipeline/releases/latest). Remember to unzip it! Alternatively, on the command line:
 
@@ -61,12 +61,12 @@ Now check `output/` (is auto-generated).
 
 ### Help
 ```bash
-$ npm run sugarcoat-pipeline -- -h
+$ npm run sugarcoat-pipeline  -- -h
 
-> sugarcoat-pipeline@0.1.0 sugarcoat-pipeline /Users/shivan/work/sugarcoat-experiments/test-sugarcoat-pipeline
+> sugarcoat-pipeline@0.1.0 sugarcoat-pipeline
 > node sugarcoat-pipeline.js "-h"
 
-usage: sugarcoat-pipeline.js [-h] [-b BINARY] [-u URL] [-t SECS] [-d] -l FILTER_LISTS [FILTER_LISTS ...] [-p POLICY] [-o OUTPUT] [-g GRAPHS_DIR_OVERRIDE] [-k] [-r RETRIES]
+usage: sugarcoat-pipeline.js [-h] [-b BINARY] [-u URL] [-t SECS] [-d] -l FILTER_LISTS [FILTER_LISTS ...] [-p POLICY] [-o OUTPUT] [-g GRAPHS_DIR_OVERRIDE] [-k] [-r RETRIES] [-m] [-s]
 
 SugarCoat pipeline CLI
 
@@ -88,6 +88,9 @@ optional arguments:
   -k, --keep            Do not erase intermediary files generated in output for sugarcoat
   -r RETRIES, --retries RETRIES
                         Number of times a URL is attempted to be re-crawled on failure. Default: 5
+  -m, --no-minify       Do not minify generated SugarCoat script.
+  -s, --keep-original-script-name
+                        Keep original script name instead of setting it to be hash of contents.
 ```
 
 ## Feedback
