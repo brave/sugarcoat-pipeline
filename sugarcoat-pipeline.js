@@ -446,17 +446,24 @@ const minifyScripts = async () => {
  * Run pipeline
  */
 (async () => {
+  console.log('Precheck and clean...');
   await preCheckAndClean();
   const graphsDirToUse = graphsDirOverride ? graphsDirOverride : graphsDir;
   const readLocal = !!graphsDirOverride;
+  console.log('Generating graphs...');
   const graphFiles = await generateGraphs(graphsDirToUse, readLocal, retries);
+  console.log('Getting scripts from graphs...');
   await getSources(graphFiles, graphsDirToUse);
+  console.log('Running sugarcoat...');
   await massageConfig(graphsDirToUse);
   await runSugarCoat();
+  console.log('Post-processing...');
   await postProcessing();
   if (minify) {
+    console.log('Minifying scripts...');
     await minifyScripts();
   }
+  console.log('Done!');
 })().catch(err => {
   console.error(err.message);
   if (!keep) {

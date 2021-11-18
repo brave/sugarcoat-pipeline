@@ -1,8 +1,69 @@
 import os
 import string
 import random
+import argparse
+import logging 
+from shutil import copyfile
 
-resources_dir = './resources'
+# Instantiate the parser
+parser = argparse.ArgumentParser()
+
+'''
+pad.py <path> <output> <size-of-bucket>
+
+This script divides up the files in path into buckets of size >= N
+that have smallest possible size and pads with a comment.
+
+- Sort files in decreasing order.
+- Divide into bins of size N by size. 
+- If left over, put all leftovers into previous bin.
+- For each bucket, pad to largest size.
+'''
+
+parser.add_argument('-r', '--resources', type=str, required=True,
+                    help='Path to input directory which contains all resources')
+parser.add_argument('-o', '--output', type=str, required=False,
+                    help='Output directory for padded scripts. Default: resources')   
+parser.add_argument('-b', '--bucket', type=int, required=True,
+                    help='Bucket size')                    
+args = parser.parse_args()
+
+print(args.resources, args.bucket, args.output)
+
+if not args.resources or not args.bucket:
+    parser.error("Both --resources and --bucket have to be specified")
+
+if not args.output:
+    args.output = args.resources
+
+resources_dir = args.resources
+bucket_size = args.bucket
+output = args.output
+
+if not os.path.isdir(output):
+    parser.error(f'Output directory {output} does not exist')
+if not os.path.isdir(resources_dir):
+    parser.error(f'Resources directory {resources_dir} does not exist')
+
+def generate_random_chars(chars, N):
+    return ''.join(random.choice(chars) for _ in range(N))
+
+def pad(filename, chars, max_size):
+    new_script_name = os.path.join(output, os.path.basename(filename))
+    to_pad = max_size - chars
+    # generate a comment string with to_pad number of chars
+    # \n/**/ is 5 extra chars
+    size_of_comment_string = to_pad - 5
+    if size_of_comment_string <= 0:
+        copyfile(filename, new_script_name)
+        return
+    inflation = (to_pad / chars) * 100
+    logging.debug(f'Length of comment string required for {filename}: {size_of_comment_string}. Inflating number of chars by: {inflation}%')
+    comment_string = f'\n/*{generate_random_chars(string.ascii_lowercase + string.digits, size_of_comment_string)}*/'
+    copyfile(filename, new_script_name)
+    with open(new_script_name, "a") as script:
+        script.write(comment_string)
+
 
 def get_file_size_chars(target):
     files_size_chars = []
@@ -18,27 +79,32 @@ def get_file_size_chars(target):
     return files_size_chars
 
 files = get_file_size_chars(resources_dir)
-max_size_file = max(files, key=lambda x: x[1])
-print(f'Max char count of file in {resources_dir} is file {max_size_file[0]} with {max_size_file[1]} and chars {max_size_file[2]}')
+if args.bucket > len(files):
+    parser.error(f"Bucket size is greater than total number of files in {resources_dir}")
 
-def generate_random_chars(chars, N):
-    return ''.join(random.choice(chars) for _ in range(N))
+for f, size, _ in files:
+    print(f'File {f} has size {size} bytes')
 
-def pad(filename, to_pad):
-    # generate a comment string with to_pad number of chars
-    # \n/**/ is 5 extra chars
-    size_of_comment_string = to_pad - 5
-    print(f'Length of comment string required for {filename}: {size_of_comment_string}')
-    if size_of_comment_string <= 0:
-        return
-    comment_string = f'\n/*{generate_random_chars(string.ascii_lowercase + string.digits, size_of_comment_string)}*/'
-    with open(filename, "a") as script:
-        script.write(comment_string)
+# Sort files by size, decreasing
+files.sort(key=lambda x : x[1], reverse=True)
 
+i = 0
+cur_max = 0
+while i < len(files):
+    if i + bucket_size <= len(files):
+        logging.debug(f'Bucket size is {bucket_size - i}')
+        max_file = files[i]
+        cur_max = max_file[2]
+        for file in files[i : i + bucket_size]:
+            pad(file[0], file[2], cur_max)
+        i += bucket_size
+    else:
+        # for left over elements, add to previous bucket
+        # increase by previous max
+        pad(files[i][0], files[i][2], cur_max)
+        i += 1
 
-for f, _, chars in files:
-    pad(f, max_size_file[2] - chars)
-
-new_files = get_file_size_chars(resources_dir)
+# Post        
+new_files = get_file_size_chars(output)
 for f, size, _ in new_files:
     print(f'File {f} now has size {size} bytes')

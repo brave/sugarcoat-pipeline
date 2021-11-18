@@ -13,7 +13,7 @@
     "test"
   ],
   "engines": {
-    "node": ">=12.22.1"
+    "node": ">=14.8.1"
   },
   "dependencies": {
     "adblock-rs": "^0.3.15",

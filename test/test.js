@@ -27,7 +27,7 @@ describe('SugarCoat Pipeline CLI', () => {
     const testDir = path.join(testCasesDirBase, '/simple');
     const listPath = path.join(testDir, 'list.txt');
     execSync(
-      `npm run sugarcoat-pipeline -- -d -u http://localhost -s -o ${outputDir} -g ${testDir} -l ${listPath} -k`,
+      `npm run sugarcoat-pipeline -- -u http://localhost -s -o ${outputDir} -g ${testDir} -l ${listPath} -k`,
       {
         stdio: 'inherit',
       }
