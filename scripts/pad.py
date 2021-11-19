@@ -11,8 +11,9 @@ parser = argparse.ArgumentParser()
 '''
 pad.py <path> <output> <size-of-bucket>
 
-This script divides up the files in path into buckets of size >= N
-that have smallest possible size and pads with a comment.
+This script divides up the script files in path into buckets 
+of size >= N that have smallest possible size and pads with 
+a comment.
 
 - Sort files in decreasing order.
 - Divide into bins of size N by size. 
@@ -21,9 +22,9 @@ that have smallest possible size and pads with a comment.
 '''
 
 parser.add_argument('-r', '--resources', type=str, required=True,
-                    help='Path to input directory which contains all resources')
+                    help='Path to input directory which contains all scripts')
 parser.add_argument('-o', '--output', type=str, required=False,
-                    help='Output directory for padded scripts. Default: resources')   
+                    help='Output directory for padded scripts. Default: <resources>')   
 parser.add_argument('-b', '--bucket', type=int, required=False,
                     help='Bucket size. Default is <number-of-resources>')                    
 args = parser.parse_args()
@@ -66,6 +67,8 @@ def pad(filename, chars, max_size):
 def get_file_size_chars(target):
     files_size_chars = []
     for root, _, files in os.walk(target):
+        # Exclude non-script resources
+        files = [file for file in files if file.endswith('.js')]
         for name in files:
             # Construct absolute path for files
             filename = os.path.join(root, name)
