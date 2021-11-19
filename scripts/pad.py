@@ -24,14 +24,12 @@ parser.add_argument('-r', '--resources', type=str, required=True,
                     help='Path to input directory which contains all resources')
 parser.add_argument('-o', '--output', type=str, required=False,
                     help='Output directory for padded scripts. Default: resources')   
-parser.add_argument('-b', '--bucket', type=int, required=True,
-                    help='Bucket size')                    
+parser.add_argument('-b', '--bucket', type=int, required=False,
+                    help='Bucket size. Default is <number-of-resources>')                    
 args = parser.parse_args()
 
-print(args.resources, args.bucket, args.output)
-
-if not args.resources or not args.bucket:
-    parser.error("Both --resources and --bucket have to be specified")
+if not args.resources:
+    parser.error("`--resources` has to be specified")
 
 if not args.output:
     args.output = args.resources
@@ -79,8 +77,13 @@ def get_file_size_chars(target):
     return files_size_chars
 
 files = get_file_size_chars(resources_dir)
-if args.bucket > len(files):
-    parser.error(f"Bucket size is greater than total number of files in {resources_dir}")
+
+if not bucket_size or bucket_size <= 0:
+    print(f"Setting bucket size to be {len(files)}")
+    bucket_size = len(files)
+if bucket_size > len(files):
+    print(f"Bucket size {bucket_size} is greater than total number of files in {resources_dir}, setting bucket size to be {len(files)}")
+    bucket_size = len(files)
 
 for f, size, _ in files:
     print(f'File {f} has size {size} bytes')
