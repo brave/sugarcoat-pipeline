@@ -112,5 +112,6 @@ while i < len(files):
 
 # Post        
 new_files = get_file_size_chars(output)
+print()
 for f, size, _ in new_files:
     print(f'File {f} now has size {size} bytes')

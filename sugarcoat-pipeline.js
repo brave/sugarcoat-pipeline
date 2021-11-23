@@ -361,6 +361,11 @@ const tweakRules = async oldNamesToNewNames => {
   const pageDomain = await getDomainOrHost(crawlUrl, false);
   const pcdnBasePath = 'https://pcdn.brave.com/sugarcoat';
   let newRules = [];
+
+  // Add name of crawl URL as first commented out rule
+  const urlComment = `! ${crawlUrl}${os.EOL}`;
+  newRules.push(urlComment);
+  // Now for all rules...
   await Promise.all(
     rules.map(async rule => {
       // 1. Only use domain
