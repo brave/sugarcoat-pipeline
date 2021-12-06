@@ -359,7 +359,6 @@ const tweakRules = async oldNamesToNewNames => {
   const file = await fs.readFile(rulesFile, 'UTF-8');
   const rules = file.toString().split(os.EOL);
   const pageDomain = await getDomainOrHost(crawlUrl, false);
-  const pcdnBasePath = 'https://pcdn.brave.com/sugarcoat';
   let newRules = [];
 
   // Add name of crawl URL as first commented out rule
@@ -384,9 +383,10 @@ const tweakRules = async oldNamesToNewNames => {
       if (sugarcoatScriptName in oldNamesToNewNames) {
         sugarcoatScriptName = oldNamesToNewNames[sugarcoatScriptName];
       }
-      // 2. Change redirect=<scriptname> to redirect-url=https://pcdn.brave.com/sugarcoat/<scriptname>
+      // 2. Change redirect=<scriptname> to be new scriptname
+      // if there is one (if we need to the hash of the contents as filename)
       // 3. Add domain= option
-      const newOptions = `${restOfFilterOptions}domain=${pageDomain},redirect-url=${pcdnBasePath}/${sugarcoatScriptName}`;
+      const newOptions = `${restOfFilterOptions}domain=${pageDomain},redirect=${sugarcoatScriptName}`;
       debug && console.debug(`New filter options are ${newOptions}`);
       newRules.push(`||${scriptDomain}${scriptUrlPath}$${newOptions}${os.EOL}`);
     })
@@ -406,7 +406,7 @@ const postProcessing = async () => {
       if (useHashForName) {
         // Rename file to be hash of script contents
         const hash = await getHashOfFile(sugarcoatedScript);
-        scriptName = `sugarcoat-${hash}.js`;
+        scriptName = `sugarcoat-${hash}`;
         debug && console.debug(`New script name for ${sugarcoatedScript} is ${scriptName}`);
         // The sugarcoat package generates the redirect option as $...redirect=filename without the .js extension
         oldNamesToNewNames[path.basename(sugarcoatedScript).split('.js')[0]] = scriptName;

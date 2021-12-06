@@ -35,7 +35,7 @@ describe('SugarCoat Pipeline CLI', () => {
     // Check output/
     expect(fs.existsSync(rules)).to.be.true;
     expect(fs.existsSync(path.join(sugarcoat_scripts, '/sugarcoat-script1.js'))).to.be.true;
-    const rulesString = `! http://localhost${os.EOL}||localhost:8000/script1.js$script,important,domain=localhost,redirect-url=https://pcdn.brave.com/sugarcoat/sugarcoat-script1${os.EOL}`;
+    const rulesString = `! http://localhost${os.EOL}||localhost:8000/script1.js$script,important,domain=localhost,redirect=sugarcoat-script1${os.EOL}`;
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
   });
 
@@ -54,8 +54,8 @@ describe('SugarCoat Pipeline CLI', () => {
     expect(fs.existsSync(rules)).to.be.true;
     expect(fs.existsSync(path.join(sugarcoat_scripts, '/sugarcoat-script1.js'))).to.be.true;
     let rulesString =
-      `! http://localhost${os.EOL}||localhost:8080/script1.js$script,important,domain=localhost,redirect-url=https://pcdn.brave.com/sugarcoat/sugarcoat-script1${os.EOL}` +
-      `||localhost:8080/script2.js$script,important,domain=localhost,redirect-url=https://pcdn.brave.com/sugarcoat/sugarcoat-script2${os.EOL}`;
+      `! http://localhost${os.EOL}||localhost:8080/script1.js$script,important,domain=localhost,redirect=sugarcoat-script1${os.EOL}` +
+      `||localhost:8080/script2.js$script,important,domain=localhost,redirect=sugarcoat-script2${os.EOL}`;
     DEBUG && console.log(fs.readFileSync(trace, 'UTF-8'));
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
   });
@@ -85,7 +85,7 @@ describe('SugarCoat Pipeline CLI', () => {
     // Check output/
     expect(fs.existsSync(rules)).to.be.true;
     expect(fs.existsSync(path.join(sugarcoat_scripts, '/sugarcoat-script1.js'))).to.be.true;
-    const rulesString = `! http://localhost${os.EOL}||localhost:8000/script1.js$script,important,domain=localhost,redirect-url=https://pcdn.brave.com/sugarcoat/sugarcoat-script1${os.EOL}`;
+    const rulesString = `! http://localhost${os.EOL}||localhost:8000/script1.js$script,important,domain=localhost,redirect=sugarcoat-script1${os.EOL}`;
     expect(fs.readFileSync(rules, 'UTF-8')).to.equal(rulesString);
   });
 
