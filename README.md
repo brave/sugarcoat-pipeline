@@ -113,3 +113,8 @@ To run a specific test,
 ```bash
 npm run test -- -g "simple"
 ```
+
+To run tests in debug mode:
+```bash
+DEBUG=true npm run test
+```
