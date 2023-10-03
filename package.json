@@ -24,7 +24,7 @@
     "shelljs": "^0.8.5",
     "sugarcoat": "git+https://github.com/brave/sugarcoat.git",
     "uglify-js": "^3.14.3",
-    "unused-filename": "^3.0.0"
+    "unused-filename": "^4.0.0"
   },
   "author": "shivan@brave.com",
   "license": "MPL-2.0",
