@@ -16,7 +16,7 @@
     "node": ">=14.8.1"
   },
   "dependencies": {
-    "adblock-rs": "^0.3.15",
+    "adblock-rs": "^0.8.0",
     "argparse": "^2.0.1",
     "globby": "^11.0.3",
     "pagegraph-crawl": "git+https://github.com/brave-experiments/pagegraph-crawl.git",
